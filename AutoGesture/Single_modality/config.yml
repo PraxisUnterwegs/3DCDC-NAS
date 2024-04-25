@@ -1,10 +1,10 @@
 common:
-  data_dir_root: /Dataset/IsoGD
-  dataset_splits: /CodeDir/AcmW_Code/dataset_splits
+  data_dir_root: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset  # TODO
+  dataset_splits: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/dataset_splits  # TODO
+  # data_dir_root: /Dataset/IsoGD
+  # dataset_splits: /CodeDir/AcmW_Code/dataset_splits
 
-  init_model: ../checkpoints/epoch22-M-valid_0.5888-test_0.6289.pth
-#  init_model: ../checkpoints/epoch24-K-valid_0.5568-test_0.6085.pth
-
+  init_model: ../checkpoints/epoch22-M-valid_0.5888-test_0.6289.pth  # TODO
 
 #-------basic parameter----------
   visname: AutoGesture_AUG_Iso

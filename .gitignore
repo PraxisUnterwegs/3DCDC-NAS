@@ -1,0 +1,5 @@
+__pycache__
+Dataset/
+IsoGD_labels/
+AutoGesture/checkpoints/
+dataset_splits/

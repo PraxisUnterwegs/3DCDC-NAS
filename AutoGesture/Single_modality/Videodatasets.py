@@ -24,18 +24,26 @@ class Videodatasets(Dataset):
     def __init__(self, dataset_root, ground_truth,  typ, sample_duration=16, phase='train'):
 
         def get_data_list_and_label(data_df, typ):
-            T = 0  # if typ == 'M' else 1
-            return [(lambda arr: ('/'.join(arr[T].split('/')[1:]), int(arr[1]), int(arr[2])))(i[:-1].split(' '))
-                    for i in open(data_df).readlines()]
-
+            #T = 0 if typ == 'M' else 1
+            result = []
+            for line in open(data_df).readlines():
+                line = line.strip()
+                c1,c2,c3 = line.split(" ")
+                #i train/003/M_00419.avi
+                data_path = "/".join(c1.split('/')[1:])
+                label = int(c3)
+                result.append((data_path, label))
+                #o ('003/M_00401.avi', 233)
+            return result
+        
         self.dataset_root = dataset_root
         self.sample_duration = sample_duration
         self.phase = phase
 
         self.transform = transforms.Compose([Normaliztion(), transforms.ToTensor()])
-
         lines= filter(lambda x: x[1] > 8, get_data_list_and_label(ground_truth, typ))
         self.inputs = list(lines)
+        #print(self.inputs)
     def transform_params(self, resize=(320, 240), crop_size=224, flip=0.5):
         if self.phase == 'train':
             left, top = random.randint(0, resize[0] - crop_size), random.randint(0, resize[1] - crop_size)
@@ -95,9 +103,14 @@ class Videodatasets(Dataset):
                 img = transform(Image.open(os.path.join(imgs_path, "%06d.jpg" % a)))
                 frams.append(self.transform(img).view(3, 112, 112, 1))
             return torch.cat(frams, dim=3).type(torch.FloatTensor)
-        data_path = os.path.join(self.dataset_root, self.inputs[index][0])
-        clip = Sample_Image(data_path, self.inputs[index][1])
-        return clip.permute(0, 3, 1, 2), self.inputs[index][2]
+        
+        videoPath = self.inputs[index][0]
+        videoPath = videoPath.split(".")[0] # remove .avi from the video path 
+        data_path = os.path.join(self.dataset_root, videoPath )
+        currentImageFramesMaximum = len(os.listdir(data_path))
+        #clip = Sample_Image(data_path, self.inputs[index][1])
+        clip = Sample_Image(data_path, currentImageFramesMaximum)
+        return clip.permute(0, 3, 1, 2), self.inputs[index][1]
 
     def __len__(self):
         return len(self.inputs)
