@@ -6,7 +6,7 @@ import os
 ### this tool will recursively convert all avis to directories with all frames as jpgs
 ###
 ###
-### python3 extract.py <path_to_all_the_avis_of_the_dataset>
+### python3 extract_jpgs_from_avis.py <path_to_all_the_avis_of_the_dataset>
 ###
 
 def find_avi_files(directory):
@@ -29,11 +29,11 @@ class avi2jpg:
             vidcap = cv2.VideoCapture(video)
             success,image = vidcap.read()
             count = 0
-            name = video
+            name = video.split(".")[0]
             try:
                 os.mkdir(name)
             except OSError as e:
-                pass
+                print(e)
             while success:
                 framecount = "{number:06}".format(number=count)
                 cv2.imwrite(os.path.join(name, framecount+".jpg"), image)     # save frame as JPEG file      

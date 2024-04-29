@@ -2,6 +2,8 @@
 
 import numpy as np
 import time
+import visdom
+import torchvision as tv
 
 
 class Visualizer():

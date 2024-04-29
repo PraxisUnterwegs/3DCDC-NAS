@@ -28,6 +28,8 @@ class Videodatasets(Dataset):
             result = []
             for line in open(data_df).readlines():
                 line = line.strip()
+                if not line:
+                    continue
                 c1,c2,c3 = line.split(" ")
                 #i train/003/M_00419.avi
                 data_path = "/".join(c1.split('/')[1:])

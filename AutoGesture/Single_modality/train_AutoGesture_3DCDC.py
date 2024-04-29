@@ -147,8 +147,11 @@ class train_val:
     def LoadOptimizer(self):
         criterion1 = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr=self.args.learning_rate, momentum=self.args.momentum, weight_decay=self.args.weight_decay)
-        lr_scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, verbose=True, threshold=0.0001,
+        # lr_scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, verbose=True, threshold=0.0001,
+        #                                  threshold_mode='rel', cooldown=3, min_lr=0.00001, eps=1e-08)
+        lr_scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, threshold=0.0001,
                                          threshold_mode='rel', cooldown=3, min_lr=0.00001, eps=1e-08)
+        lr_scheduler.verbose = True
         return optimizer, lr_scheduler, criterion1
 
     def update_lr(self, optimizer, step):
@@ -232,8 +235,9 @@ class train_val:
                 print(' Training [%2d/%2d, %4d/%4d] \t Loss: %.4f(%.4f) \t [datatime: %.3f] \t [batchtime: %.3f] \t @%s' % (
                     epoch, self.args.max_epochs, i, len(dataloader.dataset) / self.args.batch_size, loss.item(), Avg_loss.avg,
                     data_time.avg, batch_time.avg, time.strftime('%m.%d %H:%M:%S', time.localtime(time.time()))))
-                if args.theta:
-                    self.vis.plot_many({'loss': Avg_loss.avg}, 'Train-'+ self.args.type+str(args.theta))
+                if "theta" in args:
+                    if args.theta:
+                        self.vis.plot_many({'loss': Avg_loss.avg}, 'Train-'+ self.args.type+str(args.theta))
                 else:
                     self.vis.plot_many({'loss': Avg_loss.avg}, 'Train-' + self.args.type)
                 self.vis.log('LR[{m}]: {lr}'.format(m=self.args.type, lr=[g['lr'] for g in self.optimizer.param_groups]))
