@@ -24,11 +24,30 @@ class Normaliztion(object):
 
 class Videodatasets_RGBD(Dataset):
     def __init__(self, dataset_root, ground_truth1, typ1, ground_truth2, typ2, sample_duration=16, phase='train'):
-
+    # def __init__(self, dataset_root, ground_truth1, typ1, ground_truth2, typ2, sample_duration=16, phase='train'):
+    
         def get_data_list_and_label(data_df, typ):
-            T = 0  # if typ == 'M' else 1
-            return [(lambda arr: ('/'.join(arr[T].split('/')[1:]), int(arr[1]), int(arr[2])))(i[:-1].split(' '))
-                    for i in open(data_df).readlines()]
+            result = []
+            textlines = []
+            with open(data_df) as f:
+                textlines = f.readlines()
+            for line in textlines:
+                line = line.strip()
+                if not line:
+                    continue
+                c1,c2,c3 = line.split(" ")
+                #print(c1,c2)
+                #i train/003/M_00419.avi
+                if typ == 'rgb':
+                    data_path = "/".join(c1.split('/')[1:])
+                elif typ == 'depth':
+                    data_path = "/".join(c2.split('/')[1:])
+                else:
+                    continue
+                label = int(c3)
+                result.append((data_path, label))
+                #o ('003/M_00401.avi', 233)
+            return result
 
         self.dataset_root = dataset_root
         self.sample_duration = sample_duration
@@ -101,20 +120,30 @@ class Videodatasets_RGBD(Dataset):
                                                                                                         int(n * (
                                                                                                                 i + 1) / sn))))
                            for i in range(sn)]
-        sl = f(self.inputs2[index][1])
+        
+        #print(index)
+        #print(self.inputs[index])
+        videoPath = self.inputs[index][0]
+        videoPath = videoPath.split(".")[0] # remove .avi from the video path 
+        data_path = os.path.join(self.dataset_root, videoPath) 
+        currentImageFramesMaximum = len(os.listdir(data_path))
+        sl = f(currentImageFramesMaximum)
 
         #Iso
-        data_path = os.path.join('/'.join(self.dataset_root.split('/')[:-1]), self.typ1, self.phase,
-                                 '/'.join(self.inputs[index][0].split('/')[-3:]))
+        #data_path = os.path.join('/'.join(self.dataset_root.split('/')[:-1]), self.typ1, self.phase,
+        #                         '/'.join(self.inputs[index][0].split('/')[-3:]))
         clip = Sample_Image(data_path, sl)
 
-        data_path2 = os.path.join('/'.join(self.dataset_root.split('/')[:-1]), self.typ2,self.phase,
-                                  '/'.join(self.inputs2[index][0].split('/')[-3:]))
-
+        #data_path2 = os.path.join('/'.join(self.dataset_root.split('/')[:-1]), self.typ2,self.phase,
+        #                          '/'.join(self.inputs2[index][0].split('/')[-3:]))
+        videoPath2 = self.inputs2[index][0]
+        videoPath2 = videoPath2.split(".")[0] # remove .avi from the video path 
+        data_path2 = os.path.join(self.dataset_root, videoPath) 
         clip2 = Sample_Image(data_path2, sl)
 
-        assert self.inputs[index][2] == self.inputs2[index][2]
-        return clip.permute(0, 3, 1, 2), self.inputs[index][2], clip2.permute(0, 3, 1, 2)
+        # check if label is the same (for both input lists) depth&rgb
+        assert self.inputs[index][1] == self.inputs2[index][1]
+        return clip.permute(0, 3, 1, 2), self.inputs[index][1], clip2.permute(0, 3, 1, 2)
 
     def __len__(self):
         return len(self.inputs2)

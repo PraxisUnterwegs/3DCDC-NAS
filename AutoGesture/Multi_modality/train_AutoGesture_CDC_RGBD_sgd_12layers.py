@@ -162,6 +162,7 @@ def Module(args):
             print('init.xavier_normal_(model.classifier.weight)')
             from torch.nn import init
             model.classifier = torch.nn.Linear(6144, 249)
+            # model.classifier = torch.nn.Linear(6144, 249)
             init.xavier_normal_(model.classifier.weight)
     print('Load module Finished')
     print('=' * 20)
@@ -174,14 +175,14 @@ def GetData(args):
     modality2 = 'depth'
 
     train_dataset = Videodatasets_RGBD(args.data_dir_root + '/train',
-                                args.dataset_splits + '/{0}_train_lst.txt'.format(modality1), modality1,
+                                args.dataset_splits + '/{0}_train_lst.txt'.format(modality2), modality1,
                                 args.dataset_splits + '/{0}_train_lst.txt'.format(modality2), modality2,
                                 args.sample_duration, phase='train')
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,
                                   pin_memory=True)
 
     valid_dataset = Videodatasets_RGBD(args.data_dir_root + '/valid',
-                                args.dataset_splits + '/{0}_valid_lst.txt'.format(modality1), modality1,
+                                args.dataset_splits + '/{0}_valid_lst.txt'.format(modality2), modality1,
                                 args.dataset_splits + '/{0}_valid_lst.txt'.format(modality2), modality2,
                                 args.sample_duration, phase='valid')
     valid_dataloader = DataLoader(valid_dataset, batch_size=args.testing_batch_size, shuffle=False,
@@ -189,7 +190,7 @@ def GetData(args):
                                   pin_memory=True)
     try:
         test_dataset = Videodatasets_RGBD(args.data_dir_root + '/test',
-                                   args.dataset_splits + '/{0}_test_lst.txt'.format(modality1), modality1,
+                                   args.dataset_splits + '/{0}_test_lst.txt'.format(modality2), modality1,
                                    args.dataset_splits + '/{0}_test_lst.txt'.format(modality2), modality2,
                                    args.sample_duration, phase='test')
         test_dataloader = DataLoader(test_dataset, batch_size=args.testing_batch_size, shuffle=False,
@@ -236,8 +237,11 @@ class train_val:
         criterion1 = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.SGD(self.model.parameters(), lr=self.args.learning_rate, momentum=self.args.momentum,
                                     weight_decay=self.args.weight_decay)
-        lr_scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, verbose=True, threshold=0.0001,
+        # lr_scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, verbose=True, threshold=0.0001,
+        #                                  threshold_mode='rel', cooldown=3, min_lr=0.00001, eps=1e-08)
+        lr_scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, threshold=0.0001,
                                          threshold_mode='rel', cooldown=3, min_lr=0.00001, eps=1e-08)
+        lr_scheduler.verbose = True
         return optimizer, lr_scheduler, criterion1
 
     def update_lr(self, optimizer, step):
@@ -419,7 +423,7 @@ if __name__ == '__main__':
     random.seed(seed)
     np.random.seed(seed)
 
-    args = Config(parse())
+    args = Config(parse())  # Config()是config.py这个文件里定义的函数
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_ids
 
     cudnn.benchmark = True

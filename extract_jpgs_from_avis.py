@@ -7,7 +7,7 @@ import os
 ###
 ###
 ### python3 extract_jpgs_from_avis.py <path_to_all_the_avis_of_the_dataset>
-###
+### python3 extract_jpgs_from_avis.py /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/test
 
 def find_avi_files(directory):
     avi_files = []
