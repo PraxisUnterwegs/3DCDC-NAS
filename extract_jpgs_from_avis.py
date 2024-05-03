@@ -2,12 +2,15 @@ import cv2
 import sys
 import os
 
+from multiprocessing.pool import ThreadPool as Pool
+
 ### usage
 ### this tool will recursively convert all avis to directories with all frames as jpgs
 ###
 ###
 ### python3 extract_jpgs_from_avis.py <path_to_all_the_avis_of_the_dataset>
 ### python3 extract_jpgs_from_avis.py /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/test
+
 
 def find_avi_files(directory):
     avi_files = []
@@ -21,25 +24,36 @@ def find_avi_files(directory):
                 avi_files.append(os.path.join(root, file))
     return avi_files
 
+cpuCount = os.cpu_count()
+pool_size = int(0.9*cpuCount)
+print("using %s CPUS!" % pool_size)
 class avi2jpg:
+
+    def process(videopath):
+        print(' + processing new video: %s' % (videopath))
+        vidcap = cv2.VideoCapture(videopath)
+        success,image = vidcap.read()
+        count = 0
+        name = videopath.split(".")[0]
+        try:
+            os.mkdir(name)
+        except OSError as e:
+            pass
+        while success:
+            framecount = "{number:06}".format(number=count)
+            cv2.imwrite(os.path.join(name, framecount+".jpg"), image)   
+            success,image = vidcap.read()
+            count += 1
+        print(' - %s successfully processed: %s' % (name, count))
+
     def convert(self, path):
         # Find all .avi files in the directory
         videos = find_avi_files(path)
+        pool = Pool(pool_size)
         for video in videos:
-            vidcap = cv2.VideoCapture(video)
-            success,image = vidcap.read()
-            count = 0
-            name = video.split(".")[0]
-            try:
-                os.mkdir(name)
-            except OSError as e:
-                print(e)
-            while success:
-                framecount = "{number:06}".format(number=count)
-                cv2.imwrite(os.path.join(name, framecount+".jpg"), image)     # save frame as JPEG file      
-                success,image = vidcap.read()
-                count += 1
-            print('%s read a new video: %s' % (name, count))
+            pool.apply_async(avi2jpg.process, (video,))
+        pool.close()
+        pool.join()  
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
