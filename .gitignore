@@ -1,5 +1,8 @@
-__pycache__
+**/__pycache__/
 Dataset/
 IsoGD_labels/
 AutoGesture/checkpoints/
 dataset_splits/
+AutoGesture/Multi_modality/middle.pth
+**/*.log
+**/*.pyc

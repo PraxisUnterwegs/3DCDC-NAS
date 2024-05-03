@@ -296,7 +296,7 @@ class train_val:
                     round(valid_acc, 4), round(test_acc, 4))
                 if not os.path.exists(os.path.split(model_save_filename)[0]): os.makedirs(
                     os.path.split(model_save_filename)[0])
-                if valid_acc > self.best_val_acc:
+                if valid_acc > self.best_val_acc:  # 如果valid_acc超过0.4 的话，这个模型就会被保存。
                     torch.save(self.model.state_dict(), model_save_filename)
                     with open("log/logfile_{}_{}_{}.txt".format(args.res_layer, args.sample_duration, args.type),
                               'a') as opened_file:
