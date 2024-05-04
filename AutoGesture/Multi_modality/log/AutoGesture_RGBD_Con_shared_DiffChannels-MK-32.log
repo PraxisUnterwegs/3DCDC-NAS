@@ -1,0 +1,247 @@
+data_dir_root: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset
+dataset_splits: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/dataset_splits
+init_model: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/AutoGesture/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth
+visname: AutoGesture_AUG_RGBD
+num_classes: 249
+batch_size: 2
+testing_batch_size: 16
+num_workers: 4
+learning_rate: 0.01
+momentum: 0.9
+weight_decay: 5e-05
+init_epochs: 0
+max_epochs: 5
+print_freq: 5
+pretrain: True
+sample_duration: 32
+init_channels8: 48
+init_channels16: 32
+init_channels32: 16
+layers: 12
+====================
+load from AutoGesture_RGBD_Con_shared_DiffChannels
+Load state dict...
+init.xavier_normal_(model.classifier.weight)
+Load module Finished
+====================
+Start load Data...
+Load <IsoGD>  Dataset!
+====================
+Start training...
+ Training [ 0/ 5,    4/ 190] 	 Loss: 5.6918(5.5206) 	 [datatime: 0.695] 	 [batchtime: 1.781] 	 @05.01 20:36:31
+ Training [ 0/ 5,    9/ 190] 	 Loss: 5.5983(5.4808) 	 [datatime: 0.490] 	 [batchtime: 1.240] 	 @05.01 20:36:34
+ Training [ 0/ 5,   14/ 190] 	 Loss: 5.6055(5.5059) 	 [datatime: 0.421] 	 [batchtime: 1.058] 	 @05.01 20:36:38
+ Training [ 0/ 5,   19/ 190] 	 Loss: 5.8599(5.5297) 	 [datatime: 0.385] 	 [batchtime: 0.966] 	 @05.01 20:36:41
+ Training [ 0/ 5,   24/ 190] 	 Loss: 5.4807(5.5247) 	 [datatime: 0.364] 	 [batchtime: 0.913] 	 @05.01 20:36:45
+ Training [ 0/ 5,   29/ 190] 	 Loss: 5.7391(5.5573) 	 [datatime: 0.348] 	 [batchtime: 0.876] 	 @05.01 20:36:48
+ Training [ 0/ 5,   34/ 190] 	 Loss: 5.5435(5.5649) 	 [datatime: 0.339] 	 [batchtime: 0.851] 	 @05.01 20:36:52
+ Training [ 0/ 5,   39/ 190] 	 Loss: 5.3494(5.5499) 	 [datatime: 0.332] 	 [batchtime: 0.832] 	 @05.01 20:36:55
+ Training [ 0/ 5,   44/ 190] 	 Loss: 5.6660(5.5440) 	 [datatime: 0.325] 	 [batchtime: 0.817] 	 @05.01 20:36:59
+ Training [ 0/ 5,   49/ 190] 	 Loss: 5.7711(5.5618) 	 [datatime: 0.322] 	 [batchtime: 0.807] 	 @05.01 20:37:02
+ Training [ 0/ 5,   54/ 190] 	 Loss: 5.5435(5.5588) 	 [datatime: 0.320] 	 [batchtime: 0.799] 	 @05.01 20:37:06
+ Training [ 0/ 5,   59/ 190] 	 Loss: 5.6417(5.5661) 	 [datatime: 0.319] 	 [batchtime: 0.793] 	 @05.01 20:37:09
+ Training [ 0/ 5,   64/ 190] 	 Loss: 5.4875(5.5645) 	 [datatime: 0.318] 	 [batchtime: 0.787] 	 @05.01 20:37:13
+ Training [ 0/ 5,   69/ 190] 	 Loss: 5.6122(5.5694) 	 [datatime: 0.316] 	 [batchtime: 0.784] 	 @05.01 20:37:17
+ Training [ 0/ 5,   74/ 190] 	 Loss: 5.7910(5.5726) 	 [datatime: 0.315] 	 [batchtime: 0.780] 	 @05.01 20:37:20
+ Training [ 0/ 5,   79/ 190] 	 Loss: 5.8208(5.5718) 	 [datatime: 0.315] 	 [batchtime: 0.777] 	 @05.01 20:37:24
+ Training [ 0/ 5,   84/ 190] 	 Loss: 5.5430(5.5782) 	 [datatime: 0.314] 	 [batchtime: 0.774] 	 @05.01 20:37:28
+ Training [ 0/ 5,   89/ 190] 	 Loss: 5.4207(5.5822) 	 [datatime: 0.312] 	 [batchtime: 0.770] 	 @05.01 20:37:31
+ Training [ 0/ 5,   94/ 190] 	 Loss: 5.5430(5.5751) 	 [datatime: 0.310] 	 [batchtime: 0.766] 	 @05.01 20:37:35
+ Training [ 0/ 5,   99/ 190] 	 Loss: 5.4646(5.5831) 	 [datatime: 0.308] 	 [batchtime: 0.762] 	 @05.01 20:37:38
+ Training [ 0/ 5,  104/ 190] 	 Loss: 5.5135(5.5723) 	 [datatime: 0.307] 	 [batchtime: 0.759] 	 @05.01 20:37:42
+ Training [ 0/ 5,  109/ 190] 	 Loss: 5.7876(5.5725) 	 [datatime: 0.305] 	 [batchtime: 0.756] 	 @05.01 20:37:45
+ Training [ 0/ 5,  114/ 190] 	 Loss: 5.8114(5.5719) 	 [datatime: 0.304] 	 [batchtime: 0.753] 	 @05.01 20:37:49
+ Training [ 0/ 5,  119/ 190] 	 Loss: 5.3976(5.5680) 	 [datatime: 0.302] 	 [batchtime: 0.751] 	 @05.01 20:37:52
+ Training [ 0/ 5,  124/ 190] 	 Loss: 5.7405(5.5661) 	 [datatime: 0.301] 	 [batchtime: 0.749] 	 @05.01 20:37:56
+ Training [ 0/ 5,  129/ 190] 	 Loss: 5.6230(5.5688) 	 [datatime: 0.300] 	 [batchtime: 0.747] 	 @05.01 20:37:59
+ Training [ 0/ 5,  134/ 190] 	 Loss: 5.7150(5.5656) 	 [datatime: 0.299] 	 [batchtime: 0.745] 	 @05.01 20:38:02
+ Training [ 0/ 5,  139/ 190] 	 Loss: 5.5670(5.5663) 	 [datatime: 0.299] 	 [batchtime: 0.743] 	 @05.01 20:38:06
+ Training [ 0/ 5,  144/ 190] 	 Loss: 5.9469(5.5699) 	 [datatime: 0.299] 	 [batchtime: 0.742] 	 @05.01 20:38:10
+ Training [ 0/ 5,  149/ 190] 	 Loss: 5.6871(5.5730) 	 [datatime: 0.298] 	 [batchtime: 0.741] 	 @05.01 20:38:13
+ Training [ 0/ 5,  154/ 190] 	 Loss: 5.0583(5.5714) 	 [datatime: 0.297] 	 [batchtime: 0.739] 	 @05.01 20:38:16
+ Training [ 0/ 5,  159/ 190] 	 Loss: 5.7157(5.5724) 	 [datatime: 0.297] 	 [batchtime: 0.738] 	 @05.01 20:38:20
+ Training [ 0/ 5,  164/ 190] 	 Loss: 5.3721(5.5720) 	 [datatime: 0.297] 	 [batchtime: 0.737] 	 @05.01 20:38:24
+ Training [ 0/ 5,  169/ 190] 	 Loss: 5.9848(5.5727) 	 [datatime: 0.297] 	 [batchtime: 0.736] 	 @05.01 20:38:27
+ Training [ 0/ 5,  174/ 190] 	 Loss: 5.7362(5.5776) 	 [datatime: 0.296] 	 [batchtime: 0.736] 	 @05.01 20:38:31
+ Training [ 0/ 5,  179/ 190] 	 Loss: 5.2031(5.5762) 	 [datatime: 0.297] 	 [batchtime: 0.737] 	 @05.01 20:38:35
+ Training [ 0/ 5,  184/ 190] 	 Loss: 5.3447(5.5750) 	 [datatime: 0.298] 	 [batchtime: 0.738] 	 @05.01 20:38:39
+ Training [ 0/ 5,  189/ 190] 	 Loss: 5.7421(5.5748) 	 [datatime: 0.299] 	 [batchtime: 0.741] 	 @05.01 20:38:43
+ Training [ 1/ 5,    4/ 190] 	 Loss: 5.4973(5.5674) 	 [datatime: 0.354] 	 [batchtime: 0.777] 	 @05.01 20:38:52
+ Training [ 1/ 5,    9/ 190] 	 Loss: 5.4111(5.4997) 	 [datatime: 0.321] 	 [batchtime: 0.739] 	 @05.01 20:38:56
+ Training [ 1/ 5,   14/ 190] 	 Loss: 5.6460(5.5034) 	 [datatime: 0.308] 	 [batchtime: 0.729] 	 @05.01 20:38:59
+ Training [ 1/ 5,   19/ 190] 	 Loss: 5.9006(5.5436) 	 [datatime: 0.302] 	 [batchtime: 0.718] 	 @05.01 20:39:03
+ Training [ 1/ 5,   24/ 190] 	 Loss: 5.5577(5.5613) 	 [datatime: 0.297] 	 [batchtime: 0.710] 	 @05.01 20:39:06
+ Training [ 1/ 5,   29/ 190] 	 Loss: 5.5094(5.5455) 	 [datatime: 0.294] 	 [batchtime: 0.705] 	 @05.01 20:39:10
+ Training [ 1/ 5,   34/ 190] 	 Loss: 5.3435(5.5576) 	 [datatime: 0.293] 	 [batchtime: 0.702] 	 @05.01 20:39:13
+ Training [ 1/ 5,   39/ 190] 	 Loss: 5.2674(5.5582) 	 [datatime: 0.290] 	 [batchtime: 0.699] 	 @05.01 20:39:16
+ Training [ 1/ 5,   44/ 190] 	 Loss: 5.7826(5.5562) 	 [datatime: 0.289] 	 [batchtime: 0.696] 	 @05.01 20:39:20
+ Training [ 1/ 5,   49/ 190] 	 Loss: 6.0566(5.5478) 	 [datatime: 0.288] 	 [batchtime: 0.694] 	 @05.01 20:39:23
+ Training [ 1/ 5,   54/ 190] 	 Loss: 5.3487(5.5520) 	 [datatime: 0.287] 	 [batchtime: 0.693] 	 @05.01 20:39:27
+ Training [ 1/ 5,   59/ 190] 	 Loss: 5.1487(5.5513) 	 [datatime: 0.287] 	 [batchtime: 0.692] 	 @05.01 20:39:30
+ Training [ 1/ 5,   64/ 190] 	 Loss: 5.3617(5.5509) 	 [datatime: 0.285] 	 [batchtime: 0.690] 	 @05.01 20:39:33
+ Training [ 1/ 5,   69/ 190] 	 Loss: 5.3963(5.5546) 	 [datatime: 0.284] 	 [batchtime: 0.690] 	 @05.01 20:39:37
+ Training [ 1/ 5,   74/ 190] 	 Loss: 5.8977(5.5635) 	 [datatime: 0.285] 	 [batchtime: 0.691] 	 @05.01 20:39:40
+ Training [ 1/ 5,   79/ 190] 	 Loss: 5.4165(5.5704) 	 [datatime: 0.286] 	 [batchtime: 0.691] 	 @05.01 20:39:44
+ Training [ 1/ 5,   84/ 190] 	 Loss: 5.5154(5.5802) 	 [datatime: 0.285] 	 [batchtime: 0.690] 	 @05.01 20:39:47
+ Training [ 1/ 5,   89/ 190] 	 Loss: 5.4538(5.5738) 	 [datatime: 0.286] 	 [batchtime: 0.691] 	 @05.01 20:39:51
+ Training [ 1/ 5,   94/ 190] 	 Loss: 5.6980(5.5697) 	 [datatime: 0.286] 	 [batchtime: 0.690] 	 @05.01 20:39:54
+ Training [ 1/ 5,   99/ 190] 	 Loss: 5.3345(5.5669) 	 [datatime: 0.286] 	 [batchtime: 0.690] 	 @05.01 20:39:57
+ Training [ 1/ 5,  104/ 190] 	 Loss: 5.6984(5.5705) 	 [datatime: 0.286] 	 [batchtime: 0.690] 	 @05.01 20:40:01
+ Training [ 1/ 5,  109/ 190] 	 Loss: 5.7398(5.5751) 	 [datatime: 0.285] 	 [batchtime: 0.689] 	 @05.01 20:40:04
+ Training [ 1/ 5,  114/ 190] 	 Loss: 5.6720(5.5681) 	 [datatime: 0.285] 	 [batchtime: 0.688] 	 @05.01 20:40:08
+ Training [ 1/ 5,  119/ 190] 	 Loss: 5.6769(5.5684) 	 [datatime: 0.284] 	 [batchtime: 0.687] 	 @05.01 20:40:11
+ Training [ 1/ 5,  124/ 190] 	 Loss: 5.2909(5.5650) 	 [datatime: 0.284] 	 [batchtime: 0.687] 	 @05.01 20:40:14
+ Training [ 1/ 5,  129/ 190] 	 Loss: 5.3222(5.5613) 	 [datatime: 0.284] 	 [batchtime: 0.687] 	 @05.01 20:40:18
+ Training [ 1/ 5,  134/ 190] 	 Loss: 5.7422(5.5629) 	 [datatime: 0.284] 	 [batchtime: 0.688] 	 @05.01 20:40:21
+ Training [ 1/ 5,  139/ 190] 	 Loss: 5.4491(5.5591) 	 [datatime: 0.284] 	 [batchtime: 0.690] 	 @05.01 20:40:25
+ Training [ 1/ 5,  144/ 190] 	 Loss: 5.7619(5.5616) 	 [datatime: 0.284] 	 [batchtime: 0.691] 	 @05.01 20:40:29
+ Training [ 1/ 5,  149/ 190] 	 Loss: 5.8677(5.5591) 	 [datatime: 0.284] 	 [batchtime: 0.691] 	 @05.01 20:40:32
+ Training [ 1/ 5,  154/ 190] 	 Loss: 5.2802(5.5561) 	 [datatime: 0.283] 	 [batchtime: 0.691] 	 @05.01 20:40:35
+ Training [ 1/ 5,  159/ 190] 	 Loss: 5.3812(5.5529) 	 [datatime: 0.284] 	 [batchtime: 0.691] 	 @05.01 20:40:39
+ Training [ 1/ 5,  164/ 190] 	 Loss: 5.5800(5.5540) 	 [datatime: 0.284] 	 [batchtime: 0.692] 	 @05.01 20:40:43
+ Training [ 1/ 5,  169/ 190] 	 Loss: 5.7696(5.5529) 	 [datatime: 0.284] 	 [batchtime: 0.692] 	 @05.01 20:40:46
+ Training [ 1/ 5,  174/ 190] 	 Loss: 5.4445(5.5525) 	 [datatime: 0.283] 	 [batchtime: 0.692] 	 @05.01 20:40:49
+ Training [ 1/ 5,  179/ 190] 	 Loss: 5.7240(5.5514) 	 [datatime: 0.283] 	 [batchtime: 0.691] 	 @05.01 20:40:53
+ Training [ 1/ 5,  184/ 190] 	 Loss: 5.5024(5.5518) 	 [datatime: 0.283] 	 [batchtime: 0.691] 	 @05.01 20:40:56
+ Training [ 1/ 5,  189/ 190] 	 Loss: 5.6302(5.5534) 	 [datatime: 0.283] 	 [batchtime: 0.691] 	 @05.01 20:41:00
+ Training [ 2/ 5,    4/ 190] 	 Loss: 5.5865(5.6971) 	 [datatime: 0.342] 	 [batchtime: 0.763] 	 @05.01 20:41:05
+ Training [ 2/ 5,    9/ 190] 	 Loss: 5.8386(5.6054) 	 [datatime: 0.323] 	 [batchtime: 0.741] 	 @05.01 20:41:09
+ Training [ 2/ 5,   14/ 190] 	 Loss: 5.5479(5.5655) 	 [datatime: 0.313] 	 [batchtime: 0.731] 	 @05.01 20:41:12
+ Training [ 2/ 5,   19/ 190] 	 Loss: 5.4808(5.5601) 	 [datatime: 0.308] 	 [batchtime: 0.725] 	 @05.01 20:41:16
+ Training [ 2/ 5,   24/ 190] 	 Loss: 5.4323(5.5666) 	 [datatime: 0.309] 	 [batchtime: 0.724] 	 @05.01 20:41:20
+ Training [ 2/ 5,   29/ 190] 	 Loss: 5.7325(5.5653) 	 [datatime: 0.308] 	 [batchtime: 0.722] 	 @05.01 20:41:23
+ Training [ 2/ 5,   34/ 190] 	 Loss: 5.7326(5.5661) 	 [datatime: 0.308] 	 [batchtime: 0.721] 	 @05.01 20:41:27
+ Training [ 2/ 5,   39/ 190] 	 Loss: 5.4184(5.5673) 	 [datatime: 0.303] 	 [batchtime: 0.715] 	 @05.01 20:41:30
+ Training [ 2/ 5,   44/ 190] 	 Loss: 5.7374(5.5576) 	 [datatime: 0.300] 	 [batchtime: 0.711] 	 @05.01 20:41:33
+ Training [ 2/ 5,   49/ 190] 	 Loss: 5.5798(5.5537) 	 [datatime: 0.298] 	 [batchtime: 0.708] 	 @05.01 20:41:37
+ Training [ 2/ 5,   54/ 190] 	 Loss: 5.5135(5.5593) 	 [datatime: 0.296] 	 [batchtime: 0.706] 	 @05.01 20:41:40
+ Training [ 2/ 5,   59/ 190] 	 Loss: 5.5613(5.5536) 	 [datatime: 0.295] 	 [batchtime: 0.703] 	 @05.01 20:41:44
+ Training [ 2/ 5,   64/ 190] 	 Loss: 5.4103(5.5495) 	 [datatime: 0.294] 	 [batchtime: 0.702] 	 @05.01 20:41:47
+ Training [ 2/ 5,   69/ 190] 	 Loss: 5.3030(5.5504) 	 [datatime: 0.293] 	 [batchtime: 0.701] 	 @05.01 20:41:51
+ Training [ 2/ 5,   74/ 190] 	 Loss: 5.6132(5.5492) 	 [datatime: 0.293] 	 [batchtime: 0.700] 	 @05.01 20:41:54
+ Training [ 2/ 5,   79/ 190] 	 Loss: 5.3387(5.5491) 	 [datatime: 0.292] 	 [batchtime: 0.698] 	 @05.01 20:41:57
+ Training [ 2/ 5,   84/ 190] 	 Loss: 5.8883(5.5604) 	 [datatime: 0.290] 	 [batchtime: 0.697] 	 @05.01 20:42:01
+ Training [ 2/ 5,   89/ 190] 	 Loss: 5.7123(5.5696) 	 [datatime: 0.291] 	 [batchtime: 0.698] 	 @05.01 20:42:04
+ Training [ 2/ 5,   94/ 190] 	 Loss: 5.7276(5.5662) 	 [datatime: 0.292] 	 [batchtime: 0.698] 	 @05.01 20:42:08
+ Training [ 2/ 5,   99/ 190] 	 Loss: 5.6184(5.5683) 	 [datatime: 0.292] 	 [batchtime: 0.697] 	 @05.01 20:42:11
+ Training [ 2/ 5,  104/ 190] 	 Loss: 5.7903(5.5701) 	 [datatime: 0.292] 	 [batchtime: 0.697] 	 @05.01 20:42:15
+ Training [ 2/ 5,  109/ 190] 	 Loss: 5.7814(5.5610) 	 [datatime: 0.291] 	 [batchtime: 0.697] 	 @05.01 20:42:18
+ Training [ 2/ 5,  114/ 190] 	 Loss: 5.3500(5.5585) 	 [datatime: 0.291] 	 [batchtime: 0.696] 	 @05.01 20:42:22
+ Training [ 2/ 5,  119/ 190] 	 Loss: 5.8393(5.5553) 	 [datatime: 0.291] 	 [batchtime: 0.696] 	 @05.01 20:42:25
+ Training [ 2/ 5,  124/ 190] 	 Loss: 5.5670(5.5561) 	 [datatime: 0.291] 	 [batchtime: 0.695] 	 @05.01 20:42:28
+ Training [ 2/ 5,  129/ 190] 	 Loss: 5.4291(5.5547) 	 [datatime: 0.290] 	 [batchtime: 0.695] 	 @05.01 20:42:32
+ Training [ 2/ 5,  134/ 190] 	 Loss: 5.5622(5.5628) 	 [datatime: 0.289] 	 [batchtime: 0.694] 	 @05.01 20:42:35
+ Training [ 2/ 5,  139/ 190] 	 Loss: 5.3115(5.5584) 	 [datatime: 0.289] 	 [batchtime: 0.693] 	 @05.01 20:42:39
+ Training [ 2/ 5,  144/ 190] 	 Loss: 5.6188(5.5575) 	 [datatime: 0.288] 	 [batchtime: 0.692] 	 @05.01 20:42:42
+ Training [ 2/ 5,  149/ 190] 	 Loss: 5.6116(5.5579) 	 [datatime: 0.287] 	 [batchtime: 0.692] 	 @05.01 20:42:45
+ Training [ 2/ 5,  154/ 190] 	 Loss: 5.6201(5.5541) 	 [datatime: 0.287] 	 [batchtime: 0.691] 	 @05.01 20:42:49
+ Training [ 2/ 5,  159/ 190] 	 Loss: 5.6539(5.5526) 	 [datatime: 0.286] 	 [batchtime: 0.690] 	 @05.01 20:42:52
+ Training [ 2/ 5,  164/ 190] 	 Loss: 5.9795(5.5535) 	 [datatime: 0.285] 	 [batchtime: 0.690] 	 @05.01 20:42:55
+ Training [ 2/ 5,  169/ 190] 	 Loss: 5.3724(5.5551) 	 [datatime: 0.285] 	 [batchtime: 0.689] 	 @05.01 20:42:59
+ Training [ 2/ 5,  174/ 190] 	 Loss: 5.9467(5.5538) 	 [datatime: 0.285] 	 [batchtime: 0.689] 	 @05.01 20:43:02
+ Training [ 2/ 5,  179/ 190] 	 Loss: 5.3054(5.5542) 	 [datatime: 0.285] 	 [batchtime: 0.689] 	 @05.01 20:43:05
+ Training [ 2/ 5,  184/ 190] 	 Loss: 5.6187(5.5543) 	 [datatime: 0.285] 	 [batchtime: 0.689] 	 @05.01 20:43:09
+ Training [ 2/ 5,  189/ 190] 	 Loss: 5.4021(5.5509) 	 [datatime: 0.285] 	 [batchtime: 0.688] 	 @05.01 20:43:12
+ Training [ 3/ 5,    4/ 190] 	 Loss: 5.6656(5.6010) 	 [datatime: 0.326] 	 [batchtime: 0.744] 	 @05.01 20:43:18
+ Training [ 3/ 5,    9/ 190] 	 Loss: 5.6384(5.4186) 	 [datatime: 0.300] 	 [batchtime: 0.711] 	 @05.01 20:43:21
+ Training [ 3/ 5,   14/ 190] 	 Loss: 4.7255(5.2587) 	 [datatime: 0.293] 	 [batchtime: 0.699] 	 @05.01 20:43:25
+ Training [ 3/ 5,   19/ 190] 	 Loss: 4.3297(5.1827) 	 [datatime: 0.287] 	 [batchtime: 0.692] 	 @05.01 20:43:28
+ Training [ 3/ 5,   24/ 190] 	 Loss: 5.7975(5.2080) 	 [datatime: 0.284] 	 [batchtime: 0.689] 	 @05.01 20:43:31
+ Training [ 3/ 5,   29/ 190] 	 Loss: 5.0948(5.1523) 	 [datatime: 0.285] 	 [batchtime: 0.689] 	 @05.01 20:43:35
+ Training [ 3/ 5,   34/ 190] 	 Loss: 5.1559(5.1967) 	 [datatime: 0.285] 	 [batchtime: 0.692] 	 @05.01 20:43:38
+ Training [ 3/ 5,   39/ 190] 	 Loss: 4.5516(5.1366) 	 [datatime: 0.282] 	 [batchtime: 0.692] 	 @05.01 20:43:42
+ Training [ 3/ 5,   44/ 190] 	 Loss: 3.7148(5.1267) 	 [datatime: 0.282] 	 [batchtime: 0.691] 	 @05.01 20:43:45
+ Training [ 3/ 5,   49/ 190] 	 Loss: 6.1838(5.1559) 	 [datatime: 0.281] 	 [batchtime: 0.690] 	 @05.01 20:43:49
+ Training [ 3/ 5,   54/ 190] 	 Loss: 5.0628(5.1641) 	 [datatime: 0.282] 	 [batchtime: 0.690] 	 @05.01 20:43:52
+ Training [ 3/ 5,   59/ 190] 	 Loss: 4.9768(5.1908) 	 [datatime: 0.282] 	 [batchtime: 0.689] 	 @05.01 20:43:55
+ Training [ 3/ 5,   64/ 190] 	 Loss: 5.8637(5.2182) 	 [datatime: 0.282] 	 [batchtime: 0.689] 	 @05.01 20:43:59
+ Training [ 3/ 5,   69/ 190] 	 Loss: 4.6877(5.2176) 	 [datatime: 0.282] 	 [batchtime: 0.688] 	 @05.01 20:44:02
+ Training [ 3/ 5,   74/ 190] 	 Loss: 3.1234(5.2174) 	 [datatime: 0.281] 	 [batchtime: 0.687] 	 @05.01 20:44:06
+ Training [ 3/ 5,   79/ 190] 	 Loss: 6.4021(5.2014) 	 [datatime: 0.280] 	 [batchtime: 0.686] 	 @05.01 20:44:09
+ Training [ 3/ 5,   84/ 190] 	 Loss: 6.2397(5.2137) 	 [datatime: 0.280] 	 [batchtime: 0.685] 	 @05.01 20:44:12
+ Training [ 3/ 5,   89/ 190] 	 Loss: 5.3267(5.2225) 	 [datatime: 0.279] 	 [batchtime: 0.684] 	 @05.01 20:44:16
+ Training [ 3/ 5,   94/ 190] 	 Loss: 5.1376(5.2318) 	 [datatime: 0.279] 	 [batchtime: 0.683] 	 @05.01 20:44:19
+ Training [ 3/ 5,   99/ 190] 	 Loss: 4.4679(5.1940) 	 [datatime: 0.279] 	 [batchtime: 0.683] 	 @05.01 20:44:22
+ Training [ 3/ 5,  104/ 190] 	 Loss: 5.6802(5.2120) 	 [datatime: 0.278] 	 [batchtime: 0.682] 	 @05.01 20:44:26
+ Training [ 3/ 5,  109/ 190] 	 Loss: 5.1972(5.1975) 	 [datatime: 0.278] 	 [batchtime: 0.682] 	 @05.01 20:44:29
+ Training [ 3/ 5,  114/ 190] 	 Loss: 4.7836(5.2064) 	 [datatime: 0.278] 	 [batchtime: 0.681] 	 @05.01 20:44:32
+ Training [ 3/ 5,  119/ 190] 	 Loss: 3.5798(5.2122) 	 [datatime: 0.278] 	 [batchtime: 0.680] 	 @05.01 20:44:36
+ Training [ 3/ 5,  124/ 190] 	 Loss: 4.9214(5.2316) 	 [datatime: 0.278] 	 [batchtime: 0.680] 	 @05.01 20:44:39
+ Training [ 3/ 5,  129/ 190] 	 Loss: 6.5337(5.2466) 	 [datatime: 0.278] 	 [batchtime: 0.680] 	 @05.01 20:44:42
+ Training [ 3/ 5,  134/ 190] 	 Loss: 5.9704(5.2487) 	 [datatime: 0.278] 	 [batchtime: 0.680] 	 @05.01 20:44:46
+ Training [ 3/ 5,  139/ 190] 	 Loss: 3.4426(5.2434) 	 [datatime: 0.277] 	 [batchtime: 0.679] 	 @05.01 20:44:49
+ Training [ 3/ 5,  144/ 190] 	 Loss: 6.8843(5.2564) 	 [datatime: 0.278] 	 [batchtime: 0.680] 	 @05.01 20:44:53
+ Training [ 3/ 5,  149/ 190] 	 Loss: 5.8420(5.2538) 	 [datatime: 0.279] 	 [batchtime: 0.681] 	 @05.01 20:44:56
+ Training [ 3/ 5,  154/ 190] 	 Loss: 5.2078(5.2571) 	 [datatime: 0.280] 	 [batchtime: 0.682] 	 @05.01 20:45:00
+ Training [ 3/ 5,  159/ 190] 	 Loss: 5.2439(5.2425) 	 [datatime: 0.280] 	 [batchtime: 0.683] 	 @05.01 20:45:03
+ Training [ 3/ 5,  164/ 190] 	 Loss: 6.3236(5.2449) 	 [datatime: 0.281] 	 [batchtime: 0.684] 	 @05.01 20:45:07
+ Training [ 3/ 5,  169/ 190] 	 Loss: 4.8523(5.2188) 	 [datatime: 0.282] 	 [batchtime: 0.684] 	 @05.01 20:45:10
+ Training [ 3/ 5,  174/ 190] 	 Loss: 3.4147(5.2204) 	 [datatime: 0.282] 	 [batchtime: 0.685] 	 @05.01 20:45:14
+ Training [ 3/ 5,  179/ 190] 	 Loss: 4.1905(5.2022) 	 [datatime: 0.283] 	 [batchtime: 0.686] 	 @05.01 20:45:18
+ Training [ 3/ 5,  184/ 190] 	 Loss: 4.9507(5.2215) 	 [datatime: 0.284] 	 [batchtime: 0.686] 	 @05.01 20:45:21
+ Training [ 3/ 5,  189/ 190] 	 Loss: 4.0391(5.2122) 	 [datatime: 0.284] 	 [batchtime: 0.687] 	 @05.01 20:45:25
+Validation...
+ Validing [ 3/ 5,    4/  47], Loss 5.9778(6.0046), Acc: 0.0750 	 time: @05.01 20:45:54
+ Validing [ 3/ 5,    9/  47], Loss 6.5839(6.4719), Acc: 0.0625 	 time: @05.01 20:46:00
+ Validing [ 3/ 5,   14/  47], Loss 5.8551(6.3965), Acc: 0.0583 	 time: @05.01 20:46:07
+ Validing [ 3/ 5,   19/  47], Loss 7.8535(6.4686), Acc: 0.0563 	 time: @05.01 20:46:13
+ Validing [ 3/ 5,   24/  47], Loss 7.7970(6.5234), Acc: 0.0575 	 time: @05.01 20:46:20
+ Validing [ 3/ 5,   29/  47], Loss 6.5368(6.4634), Acc: 0.0583 	 time: @05.01 20:46:26
+ Validing [ 3/ 5,   34/  47], Loss 6.8485(6.3968), Acc: 0.0625 	 time: @05.01 20:46:32
+ Validing [ 3/ 5,   39/  47], Loss 6.7996(6.3992), Acc: 0.0641 	 time: @05.01 20:46:39
+ Validing [ 3/ 5,   44/  47], Loss 6.7810(6.3559), Acc: 0.0653 	 time: @05.01 20:46:45
+Testing...
+ Testing [ 3/ 5,    4/  12], Acc: 0.1125 	 time: @05.01 20:47:01
+ Testing [ 3/ 5,    9/  12], Acc: 0.0813 	 time: @05.01 20:47:08
+ Training [ 4/ 5,    4/ 190] 	 Loss: 3.5638(3.1324) 	 [datatime: 1.060] 	 [batchtime: 2.771] 	 @05.01 20:47:24
+ Training [ 4/ 5,    9/ 190] 	 Loss: 4.1916(3.7156) 	 [datatime: 1.004] 	 [batchtime: 2.473] 	 @05.01 20:47:35
+ Training [ 4/ 5,   14/ 190] 	 Loss: 2.7001(3.5034) 	 [datatime: 0.952] 	 [batchtime: 2.270] 	 @05.01 20:47:45
+ Training [ 4/ 5,   19/ 190] 	 Loss: 4.3019(3.4143) 	 [datatime: 0.981] 	 [batchtime: 2.230] 	 @05.01 20:47:55
+ Training [ 4/ 5,   24/ 190] 	 Loss: 4.3354(3.7408) 	 [datatime: 0.953] 	 [batchtime: 2.176] 	 @05.01 20:48:05
+ Training [ 4/ 5,   29/ 190] 	 Loss: 4.4419(3.7969) 	 [datatime: 0.974] 	 [batchtime: 2.193] 	 @05.01 20:48:16
+ Training [ 4/ 5,   34/ 190] 	 Loss: 3.9855(3.7818) 	 [datatime: 1.023] 	 [batchtime: 2.241] 	 @05.01 20:48:29
+ Training [ 4/ 5,   39/ 190] 	 Loss: 3.6568(3.8029) 	 [datatime: 1.065] 	 [batchtime: 2.389] 	 @05.01 20:48:46
+ Training [ 4/ 5,   44/ 190] 	 Loss: 4.9693(3.8191) 	 [datatime: 1.052] 	 [batchtime: 2.331] 	 @05.01 20:48:55
+ Training [ 4/ 5,   49/ 190] 	 Loss: 3.2883(3.7658) 	 [datatime: 1.063] 	 [batchtime: 2.368] 	 @05.01 20:49:09
+ Training [ 4/ 5,   54/ 190] 	 Loss: 4.3255(3.8339) 	 [datatime: 1.064] 	 [batchtime: 2.356] 	 @05.01 20:49:20
+ Training [ 4/ 5,   59/ 190] 	 Loss: 2.0248(3.7308) 	 [datatime: 1.058] 	 [batchtime: 2.341] 	 @05.01 20:49:31
+ Training [ 4/ 5,   64/ 190] 	 Loss: 5.9716(3.8153) 	 [datatime: 1.060] 	 [batchtime: 2.339] 	 @05.01 20:49:42
+ Training [ 4/ 5,   69/ 190] 	 Loss: 4.1466(3.8326) 	 [datatime: 1.058] 	 [batchtime: 2.354] 	 @05.01 20:49:55
+ Training [ 4/ 5,   74/ 190] 	 Loss: 2.8848(3.7868) 	 [datatime: 1.075] 	 [batchtime: 2.381] 	 @05.01 20:50:09
+ Training [ 4/ 5,   79/ 190] 	 Loss: 0.8025(3.7138) 	 [datatime: 1.081] 	 [batchtime: 2.394] 	 @05.01 20:50:22
+ Training [ 4/ 5,   84/ 190] 	 Loss: 4.6124(3.7517) 	 [datatime: 1.086] 	 [batchtime: 2.412] 	 @05.01 20:50:36
+ Training [ 4/ 5,   89/ 190] 	 Loss: 4.0349(3.7682) 	 [datatime: 1.100] 	 [batchtime: 2.422] 	 @05.01 20:50:49
+ Training [ 4/ 5,   94/ 190] 	 Loss: 3.5040(3.7799) 	 [datatime: 1.088] 	 [batchtime: 2.407] 	 @05.01 20:51:00
+ Training [ 4/ 5,   99/ 190] 	 Loss: 4.5161(3.7582) 	 [datatime: 1.087] 	 [batchtime: 2.415] 	 @05.01 20:51:12
+ Training [ 4/ 5,  104/ 190] 	 Loss: 4.7422(3.7579) 	 [datatime: 1.066] 	 [batchtime: 2.376] 	 @05.01 20:51:20
+ Training [ 4/ 5,  109/ 190] 	 Loss: 3.6254(3.7692) 	 [datatime: 1.049] 	 [batchtime: 2.363] 	 @05.01 20:51:30
+ Training [ 4/ 5,  114/ 190] 	 Loss: 2.8303(3.7727) 	 [datatime: 1.040] 	 [batchtime: 2.346] 	 @05.01 20:51:40
+ Training [ 4/ 5,  119/ 190] 	 Loss: 4.1903(3.8038) 	 [datatime: 1.033] 	 [batchtime: 2.335] 	 @05.01 20:51:51
+ Training [ 4/ 5,  124/ 190] 	 Loss: 4.5281(3.8365) 	 [datatime: 1.029] 	 [batchtime: 2.332] 	 @05.01 20:52:02
+ Training [ 4/ 5,  129/ 190] 	 Loss: 4.2755(3.8762) 	 [datatime: 1.040] 	 [batchtime: 2.349] 	 @05.01 20:52:16
+ Training [ 4/ 5,  134/ 190] 	 Loss: 5.4830(3.9403) 	 [datatime: 1.043] 	 [batchtime: 2.352] 	 @05.01 20:52:28
+ Training [ 4/ 5,  139/ 190] 	 Loss: 2.7652(3.9631) 	 [datatime: 1.044] 	 [batchtime: 2.359] 	 @05.01 20:52:41
+ Training [ 4/ 5,  144/ 190] 	 Loss: 3.4354(3.9682) 	 [datatime: 1.049] 	 [batchtime: 2.376] 	 @05.01 20:52:55
+ Training [ 4/ 5,  149/ 190] 	 Loss: 2.8539(3.9833) 	 [datatime: 1.046] 	 [batchtime: 2.393] 	 @05.01 20:53:10
+ Training [ 4/ 5,  154/ 190] 	 Loss: 5.5232(4.0080) 	 [datatime: 1.043] 	 [batchtime: 2.415] 	 @05.01 20:53:25
+ Training [ 4/ 5,  159/ 190] 	 Loss: 4.3294(3.9981) 	 [datatime: 1.041] 	 [batchtime: 2.421] 	 @05.01 20:53:38
+ Training [ 4/ 5,  164/ 190] 	 Loss: 2.6142(4.0018) 	 [datatime: 1.045] 	 [batchtime: 2.423] 	 @05.01 20:53:51
+ Training [ 4/ 5,  169/ 190] 	 Loss: 3.4598(4.0307) 	 [datatime: 1.041] 	 [batchtime: 2.407] 	 @05.01 20:54:00
+ Training [ 4/ 5,  174/ 190] 	 Loss: 5.6622(4.0246) 	 [datatime: 1.040] 	 [batchtime: 2.399] 	 @05.01 20:54:10
+ Training [ 4/ 5,  179/ 190] 	 Loss: 2.6129(3.9898) 	 [datatime: 1.036] 	 [batchtime: 2.389] 	 @05.01 20:54:21
+ Training [ 4/ 5,  184/ 190] 	 Loss: 4.6586(4.0164) 	 [datatime: 1.032] 	 [batchtime: 2.384] 	 @05.01 20:54:31
+ Training [ 4/ 5,  189/ 190] 	 Loss: 5.7283(4.0433) 	 [datatime: 1.028] 	 [batchtime: 2.377] 	 @05.01 20:54:42
+Validation...
+ Validing [ 4/ 5,    4/  47], Loss 6.5420(6.9847), Acc: 0.0625 	 time: @05.01 20:55:00
+ Validing [ 4/ 5,    9/  47], Loss 7.0865(7.2709), Acc: 0.0813 	 time: @05.01 20:55:14
+ Validing [ 4/ 5,   14/  47], Loss 7.6640(7.1414), Acc: 0.0958 	 time: @05.01 20:55:28
+ Validing [ 4/ 5,   19/  47], Loss 6.7117(7.0901), Acc: 0.1094 	 time: @05.01 20:55:42
+ Validing [ 4/ 5,   24/  47], Loss 8.2553(7.2526), Acc: 0.0975 	 time: @05.01 20:55:57
+ Validing [ 4/ 5,   29/  47], Loss 7.7722(7.2023), Acc: 0.1042 	 time: @05.01 20:56:12
+ Validing [ 4/ 5,   34/  47], Loss 4.9575(7.1042), Acc: 0.1089 	 time: @05.01 20:56:31
+ Validing [ 4/ 5,   39/  47], Loss 6.4609(7.0414), Acc: 0.1109 	 time: @05.01 20:56:52
+ Validing [ 4/ 5,   44/  47], Loss 8.5191(7.0112), Acc: 0.1097 	 time: @05.01 20:57:14
+Testing...
+ Testing [ 4/ 5,    4/  12], Acc: 0.1250 	 time: @05.01 20:57:51
+ Testing [ 4/ 5,    9/  12], Acc: 0.0813 	 time: @05.01 20:58:12
+Training finished in time: @05.01 20:58:22
