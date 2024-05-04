@@ -15,4 +15,4 @@ source activate pytorch222
 module load CUDA
 echo; export; echo; nvidia-smi; echo
  
-sh ./AutoGesture/Multi_modality/run_hpc.sh
+sh ./run_hpc.sh
