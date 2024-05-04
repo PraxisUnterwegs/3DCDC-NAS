@@ -1,8 +1,8 @@
 common:
-  data_dir_root: /home/do516430/3DCDC-NAS/Dataset
+  data_dir_root: /work/do516430/Dataset
   dataset_splits: /home/do516430/3DCDC-NAS/dataset_splits
 
-  init_model: /home/do516430/3DCDC-NAS/AutoGesture/checkpoints/AutoGesture/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth
+  init_model: /home/do516430/3DCDC-NAS/AutoGesture/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth
 # init_model: ../checkpoints/epoch29-MF-valid_0.6122-test_0.6284.pth
 # init_model: ../checkpoints/epoch26-KF-valid_0.6247-test_0.6638.pth
 
