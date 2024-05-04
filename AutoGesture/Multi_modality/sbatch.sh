@@ -15,4 +15,11 @@ source activate pytorch222
 module load CUDA
 echo; export; echo; nvidia-smi; echo
  
-sh ./run_hpc.sh
+# 在 tmux 会话中运行 visdom
+tmux new-session -d -s visdom 'visdom'
+
+# 等待5秒钟以确保 visdom 启动
+sleep 5
+
+# 在 tmux 的同一会话中新开一个窗口执行 sh ./run_hpc.sh
+tmux new-window -t visdom -n 'run_hpc.sh' '/bin/sh -c "sh ./run_hpc.sh"'
