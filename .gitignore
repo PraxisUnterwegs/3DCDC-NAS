@@ -4,5 +4,4 @@ IsoGD_labels/
 AutoGesture/checkpoints/
 dataset_splits/
 AutoGesture/Multi_modality/middle.pth
-**/*.log
 **/*.pyc

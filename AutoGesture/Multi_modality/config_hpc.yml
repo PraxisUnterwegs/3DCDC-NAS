@@ -9,7 +9,7 @@ common:
 #-------basic parameter----------
   visname: AutoGesture_AUG_RGBD # modify
   num_classes: 249 # 249
-  batch_size: 12  # 12
+  batch_size: 10  # 12
   testing_batch_size: 200  # 200
   num_workers: 4 # 4
   learning_rate: 0.01 # modify 0.01
