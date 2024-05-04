@@ -22,4 +22,4 @@ tmux new-session -d -s visdom 'visdom'
 sleep 5
 
 # 在 tmux 的同一会话中新开一个窗口执行 sh ./run_hpc.sh
-tmux new-window -t visdom -n 'run_hpc.sh' '/bin/sh -c "sh ./run_hpc.sh"'
+sh ./run_hpc.sh
