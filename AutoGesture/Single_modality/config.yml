@@ -9,14 +9,16 @@ common:
 #-------basic parameter----------
   visname: AutoGesture_AUG_Iso
   num_classes: 249
-  batch_size: 24
+  # batch_size: 24
+  batch_size: 4
   testing_batch_size: 256
   num_workers: 4
   learning_rate: 0.01
   momentum: 0.9
   weight_decay: 0.00005
   init_epochs: 0
-  max_epochs: 80
+  # max_epochs: 80
+  max_epochs: 10
   print_freq: 10
   pretrain: False
 #-------------end----------------
