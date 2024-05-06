@@ -59,6 +59,19 @@ class Videodatasets_RGBD(Dataset):
         lines2 = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth2, typ2))
         self.inputs = list(lines)
         self.inputs2 = list(lines2)
+        
+    # delete the non existent entries from all the parsed entries
+    def fixInputsfiles(self, input):
+        errorInputs = []
+        for videopath, label in input:
+            ### check if path video exists
+            if not os.path.exists(videopath):
+                errorInputs.append((videopath, label))
+        ### remove all broken video from input
+        for error in errorInputs:
+            input.remove(error)
+        ### return remaining (good) input lists
+        return input
 
     def transform_params(self, resize=(320, 240), crop_size=224, flip=0.5):
         if self.phase == 'train':
