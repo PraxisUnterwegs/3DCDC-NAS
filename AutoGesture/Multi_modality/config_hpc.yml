@@ -16,7 +16,7 @@ common:
   momentum: 0.9 # 0.9
   weight_decay: 0.00005
   init_epochs: 0 # modify
-  max_epochs: 80 # modify
+  max_epochs: 40 # modify
   print_freq: 10 # 10
   pretrain: True # modify
 #-------------end----------------
