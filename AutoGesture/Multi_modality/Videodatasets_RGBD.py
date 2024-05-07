@@ -57,8 +57,8 @@ class Videodatasets_RGBD(Dataset):
 
         lines = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth1, typ1))
         lines2 = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth2, typ2))
-        self.inputs = list(lines)
-        self.inputs2 = list(lines2)
+        self.inputs = self.fixInputsfiles(list(lines))
+        self.inputs2 = self.fixInputsfiles(list(lines2))
         
     # delete the non existent entries from all the parsed entries
     def fixInputsfiles(self, input):
