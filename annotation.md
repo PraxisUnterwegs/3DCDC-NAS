@@ -24,6 +24,9 @@ if args.type == 'M':
     elif args.type == 'F':
         modality = 'flow'
 
+train_loader👉GetData()👉train_dataloader
+
+train_dataloader👉train_loader👉training()👉train()👉
 
 
 

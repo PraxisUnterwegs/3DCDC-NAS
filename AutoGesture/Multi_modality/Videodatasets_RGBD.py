@@ -29,6 +29,7 @@ class Videodatasets_RGBD(Dataset):
         def get_data_list_and_label(data_df, typ):
             result = []
             textlines = []
+            data_path = " "
             with open(data_df) as f:
                 textlines = f.readlines()
             for line in textlines:
@@ -48,30 +49,143 @@ class Videodatasets_RGBD(Dataset):
                 result.append((data_path, label))
                 #o ('003/M_00401.avi', 233)
             return result
-
+        
+        self.phase = phase
         self.dataset_root = dataset_root
         self.sample_duration = sample_duration
         self.phase = phase
         self.typ1, self.typ2 = typ1, typ2
         self.transform = transforms.Compose([Normaliztion(), transforms.ToTensor()])
 
-        lines = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth1, typ1))
+        # lines: iterable object [(path_1, label_1)，(train/178/M_35596.avi,124 ).....]，& label>7
+        lines = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth1, typ1))  # ground_truth1 = ".../dataset_splits/rgb_train_lst.txt"
         lines2 = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth2, typ2))
-        self.inputs = self.fixInputsfiles(list(lines))
-        self.inputs2 = self.fixInputsfiles(list(lines2))
+        #self.inputs = list(lines)
+        #self.inputs2 = list(lines2)
+        self.train_miss_path_num = 0
+        self.valid_miss_path_num = 0
+        self.test_miss_path_num = 0
+        list1 = self.fixInputsfiles(list(lines))  # list is also an iterable object
+        list2 = self.fixInputsfiles(list(lines2))
+        self.inputs,self.inputs2 = self.match_list(list1,list2)
+        
+        with open('output1.txt', 'w', encoding='utf-8') as f1, open('output2.txt', 'w', encoding='utf-8') as f2:
+            for item in self.inputs:
+                f1.write(f"{item}\n")  # 假设每个item是字符串或者可以被转换为字符串
+            for item in self.inputs2:
+                f2.write(f"{item}\n")
+        
+        
         
     # delete the non existent entries from all the parsed entries
+    ### error1: we forget that videopath is like "178/K_35598.avi",it is not a complete true path
     def fixInputsfiles(self, input):
-        errorInputs = []
-        for videopath, label in input:
-            ### check if path video exists
-            if not os.path.exists(videopath):
-                errorInputs.append((videopath, label))
-        ### remove all broken video from input
-        for error in errorInputs:
-            input.remove(error)
-        ### return remaining (good) input lists
-        return input
+        train_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/train/"  # TODO
+        valid_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/valid/"  # TODO
+        test_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/test/"  # TODO
+        if self.phase == "train":
+            errorInputs = []
+            inputs = []
+            for videopath, label in input: # videopath = "/178/K_35598.avi"
+                full_path = train_path + videopath
+                if os.path.exists(full_path[:-4]):
+                    inputs.append((videopath, label))
+                    print(f"this path exists: {full_path[:-4]}")
+                else:
+                    errorInputs.append((videopath, label))
+                    #print(f"this path does not exist: {path[-6:] + videopath}")
+                    print(f"this path does not exist: {full_path[:-4]}")
+                    self.train_miss_path_num = self.train_miss_path_num + 1
+            ## check if path video exists
+        elif self.phase == "valid":
+            errorInputs = []
+            inputs = []
+            for videopath, label in input: # videopath = "/178/K_35598.avi"
+                full_path = valid_path + videopath
+                if os.path.exists(full_path[:-4]):
+                    inputs.append((videopath, label))
+                else:
+                    errorInputs.append((videopath, label))
+                    print(f"this path does not exist: {full_path[:-4]}")
+                    self.valid_miss_path_num = self.valid_miss_path_num + 1
+        elif self.phase == "test":
+            errorInputs = []
+            inputs = []
+            for videopath, label in input: # videopath = "/178/K_35598.avi"
+                full_path = test_path + videopath
+                if os.path.exists(full_path[:-4]):
+                    inputs.append((videopath, label))
+                else:
+                    errorInputs.append((videopath, label))
+                    print(f"this path does not exist: {full_path[:-4]}")
+                    self.test_miss_path_num = self.test_miss_path_num + 1
+        print(f"the number of missing path of train:{self.train_miss_path_num}")
+        print(f"the number of missing path of valid:{self.valid_miss_path_num}")
+        print(f"the number of missing path of test:{self.test_miss_path_num}")
+        inputing = list(inputs)
+        return inputing
+    
+    
+    def match_list(self,list1,list2):
+        matched_items_list1 = []
+        matched_items_list2 = []
+        for item1 in list1:
+            for item2 in list2:
+                filename1 = item1[0].split('/')[-1]  # 获取文件名
+                filename2 = item2[0].split('/')[-1]  # 获取文件名
+                if filename1[1:] == filename2[1:]:  # 比较文件名的第三个字符（即首字母）
+                    matched_items_list1.append(item1)
+                    matched_items_list2.append(item2)
+                    break  # 匹配成功后跳出内层循环
+        return matched_items_list1,matched_items_list2
+        
+    
+    
+    # def fixInputsfiles(self, input):
+    #     errorInputs = []
+    #     inputs = []
+    #     train_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/train/"  # TODO
+    #     valid_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/valid/"  # TODO
+    #     test_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/test/"  # TODO
+    #     paths = [train_path, valid_path, test_path]
+    #     miss_path_num = 0 
+    #     monitor_A = " 我的算法没错 "
+    #     monitor_B = " "
+    #     for videopath, label in input: # videopath = "178/K_35598.avi"
+            
+    #         for path in paths:
+    #             full_path = path + videopath
+    #             if os.path.exists(full_path[:-4]):
+    #                 inputs.append((videopath, label))
+    #                 print(f"this path exists: {full_path[:-4]}")
+    #                 if full_path[:-4] == '/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/train/003/M_00509':
+    #                     monitor_A = "我的算法有误"
+    #                 else:
+    #                     monitor_B = "我的算法没错"
+    #             else:
+    #                 errorInputs.append((videopath, label))
+    #                 #print(f"this path does not exist: {path[-6:] + videopath}")
+    #                 print(f"this path does not exist: {full_path[:-4]}")
+    #                 miss_path_num = miss_path_num + 1
+    #         ## check if path video exists
+    #     print(f"the number of missing path:{miss_path_num}")
+    #     print(monitor_A)
+    #     inputing = list(inputs)
+    #     return inputing
+        
+        
+        # if os.path.exists(train_path + videopath):
+            #     inputs.append((videopath, label))
+            # # 如果 train_path 下不存在，检查 valid_path 下是否存在
+            # elif os.path.exists(valid_path + videopath):
+            #     inputs.append((videopath, label))
+            # elif os.path.exists(test_path + videopath):
+            #     inputs.append((videopath, label))
+            # else:
+            # # 如果两个路径下都不存在，则将该输入视为错误输入
+            #     errorInputs.append((videopath, label))
+            #     print(f"this path does not exist: {videopath}")
+        
 
     def transform_params(self, resize=(320, 240), crop_size=224, flip=0.5):
         if self.phase == 'train':
@@ -138,7 +252,7 @@ class Videodatasets_RGBD(Dataset):
         #print(self.inputs[index])
         videoPath = self.inputs[index][0]
         videoPath = videoPath.split(".")[0] # remove .avi from the video path 
-        data_path = os.path.join(self.dataset_root, videoPath) 
+        data_path = os.path.join(self.dataset_root, videoPath)  # dataset_root = ".../Dataset/train" ,videopath = "031/K_06200"
         currentImageFramesMaximum = len(os.listdir(data_path))
         sl = f(currentImageFramesMaximum)
 
@@ -152,6 +266,7 @@ class Videodatasets_RGBD(Dataset):
         videoPath2 = self.inputs2[index][0]
         videoPath2 = videoPath2.split(".")[0] # remove .avi from the video path 
         data_path2 = os.path.join(self.dataset_root, videoPath) 
+        #data_path2 = os.path.join(self.dataset_root, videoPath) 
         clip2 = Sample_Image(data_path2, sl)
 
         # check if label is the same (for both input lists) depth&rgb
