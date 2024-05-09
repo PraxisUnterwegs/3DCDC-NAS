@@ -40,14 +40,16 @@ class Videodatasets_RGBD(Dataset):
                 #print(c1,c2)
                 #i train/003/M_00419.avi
                 if typ == 'rgb':
-                    data_path = "/".join(c1.split('/')[1:])
+                    data_path = "/".join(c1.split('/')[:])
+                    #data_path = "/".join(c1.split('/')[1:])
                 elif typ == 'depth':
-                    data_path = "/".join(c2.split('/')[1:])
+                    data_path = "/".join(c2.split('/')[:])  # data_path = "train/003/M_00401.avi"
+                    #data_path = "/".join(c2.split('/')[1:])  
                 else:
                     continue
                 label = int(c3)
                 result.append((data_path, label))
-                #o ('003/M_00401.avi', 233)
+                #o ('train/003/M_00401.avi', 233)
             return result
         
         self.phase = phase
@@ -65,14 +67,15 @@ class Videodatasets_RGBD(Dataset):
         self.train_miss_path_num = 0
         self.valid_miss_path_num = 0
         self.test_miss_path_num = 0
-        list1 = self.fixInputsfiles(list(lines))  # list is also an iterable object
-        list2 = self.fixInputsfiles(list(lines2))
+        list1,output1 = self.fixInputsfiles(list(lines))  # list is also an iterable object
+        list2,output2 = self.fixInputsfiles(list(lines2))
         self.inputs,self.inputs2 = self.match_list(list1,list2)
+        self.inputss,self.inputss2 = self.match_list(output1,output2)
         
         with open('output1.txt', 'w', encoding='utf-8') as f1, open('output2.txt', 'w', encoding='utf-8') as f2:
-            for item in self.inputs:
+            for item in self.inputss:
                 f1.write(f"{item}\n")  # 假设每个item是字符串或者可以被转换为字符串
-            for item in self.inputs2:
+            for item in self.inputss2:
                 f2.write(f"{item}\n")
         
         
@@ -80,50 +83,69 @@ class Videodatasets_RGBD(Dataset):
     # delete the non existent entries from all the parsed entries
     ### error1: we forget that videopath is like "178/K_35598.avi",it is not a complete true path
     def fixInputsfiles(self, input):
-        train_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/train/"  # TODO
-        valid_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/valid/"  # TODO
-        test_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/test/"  # TODO
+        train_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/"  # TODO
+        valid_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/"  # TODO
+        test_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/"  # TODO
         if self.phase == "train":
             errorInputs = []
             inputs = []
-            for videopath, label in input: # videopath = "/178/K_35598.avi"
+            inputss = []
+            with open("failure_path_train.txt", "w") as file1:
+                file1.truncate(0)
+            for videopath, label in input: # videopath = "train/178/K_35598.avi"
                 full_path = train_path + videopath
                 if os.path.exists(full_path[:-4]):
-                    inputs.append((videopath, label))
-                    print(f"this path exists: {full_path[:-4]}")
+                    inputs.append((videopath[6:], label))  # only "178/K_35598.avi", without "train/"
+                    inputss.append((videopath, label)) # with "train/178/K_35598.avi"
+                    #print(f"this path exists: {full_path[:-4]}")
                 else:
                     errorInputs.append((videopath, label))
                     #print(f"this path does not exist: {path[-6:] + videopath}")
-                    print(f"this path does not exist: {full_path[:-4]}")
+                    #print(f"this path does not exist: {full_path[:-4]}")
                     self.train_miss_path_num = self.train_miss_path_num + 1
+                    with open('failure_path_train.txt', 'a', encoding='utf-8') as ff1:
+                        ff1.write(f"{full_path[:-4]}\n")
             ## check if path video exists
         elif self.phase == "valid":
             errorInputs = []
             inputs = []
-            for videopath, label in input: # videopath = "/178/K_35598.avi"
+            inputss = []
+            with open("failure_path_valid.txt", "w") as file2:
+                file2.truncate(0)
+            for videopath, label in input: 
                 full_path = valid_path + videopath
                 if os.path.exists(full_path[:-4]):
-                    inputs.append((videopath, label))
+                    inputs.append((videopath[6:], label)) # only "002/M_00398.avi", without "valid/"
+                    inputss.append((videopath, label))
                 else:
                     errorInputs.append((videopath, label))
-                    print(f"this path does not exist: {full_path[:-4]}")
+                    #print(f"this path does not exist: {full_path[:-4]}")
                     self.valid_miss_path_num = self.valid_miss_path_num + 1
+                    with open('failure_path_valid.txt', 'a', encoding='utf-8') as ff2:
+                        ff2.write(f"{full_path[:-4]}\n")
         elif self.phase == "test":
             errorInputs = []
             inputs = []
+            inputss = []
+            with open("failure_path_test.txt", "w") as file3:
+                file3.truncate(0)
             for videopath, label in input: # videopath = "/178/K_35598.avi"
                 full_path = test_path + videopath
                 if os.path.exists(full_path[:-4]):
-                    inputs.append((videopath, label))
+                    inputs.append((videopath[5:], label)) # only "003/M_00401.avi", without "test/"
+                    inputss.append((videopath, label))
                 else:
                     errorInputs.append((videopath, label))
-                    print(f"this path does not exist: {full_path[:-4]}")
+                    #print(f"this path does not exist: {full_path[:-4]}")
                     self.test_miss_path_num = self.test_miss_path_num + 1
+                    with open('failure_path_test.txt', 'a', encoding='utf-8') as ff3:
+                        ff3.write(f"{full_path[:-4]}\n")
         print(f"the number of missing path of train:{self.train_miss_path_num}")
         print(f"the number of missing path of valid:{self.valid_miss_path_num}")
         print(f"the number of missing path of test:{self.test_miss_path_num}")
         inputing = list(inputs)
-        return inputing
+        inputted = list(inputss)
+        return inputing, inputted
     
     
     def match_list(self,list1,list2):
@@ -138,55 +160,8 @@ class Videodatasets_RGBD(Dataset):
                     matched_items_list2.append(item2)
                     break  # 匹配成功后跳出内层循环
         return matched_items_list1,matched_items_list2
-        
     
     
-    # def fixInputsfiles(self, input):
-    #     errorInputs = []
-    #     inputs = []
-    #     train_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/train/"  # TODO
-    #     valid_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/valid/"  # TODO
-    #     test_path = "/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/test/"  # TODO
-    #     paths = [train_path, valid_path, test_path]
-    #     miss_path_num = 0 
-    #     monitor_A = " 我的算法没错 "
-    #     monitor_B = " "
-    #     for videopath, label in input: # videopath = "178/K_35598.avi"
-            
-    #         for path in paths:
-    #             full_path = path + videopath
-    #             if os.path.exists(full_path[:-4]):
-    #                 inputs.append((videopath, label))
-    #                 print(f"this path exists: {full_path[:-4]}")
-    #                 if full_path[:-4] == '/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset/train/003/M_00509':
-    #                     monitor_A = "我的算法有误"
-    #                 else:
-    #                     monitor_B = "我的算法没错"
-    #             else:
-    #                 errorInputs.append((videopath, label))
-    #                 #print(f"this path does not exist: {path[-6:] + videopath}")
-    #                 print(f"this path does not exist: {full_path[:-4]}")
-    #                 miss_path_num = miss_path_num + 1
-    #         ## check if path video exists
-    #     print(f"the number of missing path:{miss_path_num}")
-    #     print(monitor_A)
-    #     inputing = list(inputs)
-    #     return inputing
-        
-        
-        # if os.path.exists(train_path + videopath):
-            #     inputs.append((videopath, label))
-            # # 如果 train_path 下不存在，检查 valid_path 下是否存在
-            # elif os.path.exists(valid_path + videopath):
-            #     inputs.append((videopath, label))
-            # elif os.path.exists(test_path + videopath):
-            #     inputs.append((videopath, label))
-            # else:
-            # # 如果两个路径下都不存在，则将该输入视为错误输入
-            #     errorInputs.append((videopath, label))
-            #     print(f"this path does not exist: {videopath}")
-        
-
     def transform_params(self, resize=(320, 240), crop_size=224, flip=0.5):
         if self.phase == 'train':
             left, top = random.randint(0, resize[0] - crop_size), random.randint(0, resize[1] - crop_size)
