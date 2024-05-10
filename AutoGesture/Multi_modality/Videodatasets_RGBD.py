@@ -94,7 +94,7 @@ class Videodatasets_RGBD(Dataset):
                 file1.truncate(0)
             for videopath, label in input: # videopath = "train/178/K_35598.avi"
                 full_path = train_path + videopath
-                if os.path.exists(full_path[:-4]):
+                if os.path.exists(full_path[:-4]) & os.path.exists(os.path.join(full_path[:-4], "000000.jpg")):
                     inputs.append((videopath[6:], label))  # only "178/K_35598.avi", without "train/"
                     inputss.append((videopath, label)) # with "train/178/K_35598.avi"
                     #print(f"this path exists: {full_path[:-4]}")
@@ -114,7 +114,7 @@ class Videodatasets_RGBD(Dataset):
                 file2.truncate(0)
             for videopath, label in input: 
                 full_path = valid_path + videopath
-                if os.path.exists(full_path[:-4]):
+                if os.path.exists(full_path[:-4]) & os.path.exists(os.path.join(full_path[:-4], "000000.jpg")):
                     inputs.append((videopath[6:], label)) # only "002/M_00398.avi", without "valid/"
                     inputss.append((videopath, label))
                 else:
@@ -131,7 +131,7 @@ class Videodatasets_RGBD(Dataset):
                 file3.truncate(0)
             for videopath, label in input: # videopath = "/178/K_35598.avi"
                 full_path = test_path + videopath
-                if os.path.exists(full_path[:-4]):
+                if os.path.exists(full_path[:-4]) & os.path.exists(os.path.join(full_path[:-4], "000000.jpg")):
                     inputs.append((videopath[5:], label)) # only "003/M_00401.avi", without "test/"
                     inputss.append((videopath, label))
                 else:
@@ -159,7 +159,7 @@ class Videodatasets_RGBD(Dataset):
                     matched_items_list1.append(item1)
                     matched_items_list2.append(item2)
                     break  # 匹配成功后跳出内层循环
-        return matched_items_list1,matched_items_list2
+        return matched_items_list1,matched_items_list2        
     
     
     def transform_params(self, resize=(320, 240), crop_size=224, flip=0.5):
