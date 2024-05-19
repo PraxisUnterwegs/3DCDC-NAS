@@ -137,7 +137,8 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
-
+# Module()的目的实际上是为了方便训练做出选择（有与旋律模型 or 无预训练模型）
+# The purpose of Module() is actually to facilitate the choice of training(with pre-trained model or without pre-training model)
 def Module(args):
     print("load from AutoGesture_RGBD_Con_shared_DiffChannels")
     from models.AutoGesture_RGBD_searched_12layers_DiffChannels import AutoGesture_RGBD_12layers as Auto_RGBD_Diff
@@ -167,8 +168,12 @@ def Module(args):
     print('Load module Finished')
     print('=' * 20)
     return torch.nn.DataParallel(model).cuda() if len(args.gpu_ids) > 1 else model.cuda()
+    # return value is model object
+    # torch.nn.DataParallel used to Multi-GPU parallel training
 
 
+# GetData的目的就是依据xxx_lst.txt文件里的记录来读取Dataset文件夹下的对应数据集，转化为DataLoader对象，然后投入训练
+# The purpose of GetData is to read the corresponding data set in the Dataset folder based on the records in the xxx_lst.txt file, and then put it into training
 def GetData(args):
     print('Start load Data...')
     modality1 = 'rgb'
@@ -188,6 +193,11 @@ def GetData(args):
     valid_dataloader = DataLoader(valid_dataset, batch_size=args.testing_batch_size, shuffle=False,
                                   num_workers=args.num_workers,
                                   pin_memory=True)
+    '''
+    Videodatasets_RGBD返回的张量(test_dataset)是4维的，应该是[3, num_sl, 112, 112] , num_sl表示test/003/M_00600文件下.jpg文件的个数
+    DataLoader返回的张量(test_dataloader)是5维的，应该是[2, 3, 32, 112, 112]，2应该是batch_size
+    
+    '''
     try:
         test_dataset = Videodatasets_RGBD(args.data_dir_root + '/test',
                                    args.dataset_splits + '/{0}_test_lst.txt'.format(modality2), modality1,
@@ -259,6 +269,7 @@ class train_val:
         if in_lr / in_dlr == 0.1:
             self.step = 0
 
+    # training是为了进行选择，是进行train还是valid，还是test阶段，至于具体的实现会分散在self.train(),self.valid()...中，这些函数在training中会被调用
     def training(self, train_loader, val_loader, test_loader):
         print('Start training...')
         for epoch in range(self.args.init_epochs, self.args.max_epochs):
@@ -313,6 +324,7 @@ class train_val:
 
         end = time.time()
         for i, (d, l, d2) in tqdm(enumerate(dataloader)):
+            print(f"d:{d.shape}, l:{l.shape}, d2:{d2.shape}")
             outputs = self.model(d.cuda(), d2.cuda())
             data_time.update(time.time() - end)
 
@@ -384,7 +396,7 @@ class train_val:
             for i, (d, l, d2) in tqdm(enumerate(dataloader)):
                 outputs = self.model(d.cuda(), d2.cuda())
                 pred = torch.argmax(outputs, dim=1)
-                correct += (pred == l.cuda()).sum().item()
+                correct += (pred == l.cuda()).sum().item()  # l在dataloader里肯定是label
                 max_num += len(d)
                 acc = float(correct) / max_num
 
@@ -417,19 +429,29 @@ def parse():
 
 if __name__ == '__main__':
     seed = 123
-    torch.manual_seed(seed)
+    torch.manual_seed(seed)  # Set the random seed for CPU to 123
     # torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    torch.cuda.manual_seed_all(seed)  # Set the random seed for all available GPUs to 123
     random.seed(seed)
     np.random.seed(seed)
 
     args = Config(parse())  # Config()是config.py这个文件里定义的函数
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_ids
-
-    cudnn.benchmark = True
+    
+    
+    cudnn.benchmark = True  # This setting enables the automatic optimization of cuDNN, NVIDIA's deep neural network library, to select the best convolutional algorithm to speed up model training.
     vis = Visualizer(args.visname)
     model = Module(args)
 
     train_loader, valid_loader, test_loader = GetData(args)
     train_val(model, args, vis, train_loader, valid_loader, test_loader)
+    print(f"test_loader长啥样：{test_loader}")
+    print(f"test_loader的尺寸：{test_loader.shape}")
     # train_val(model, args, train_loader, valid_loader, test_loader)
+    
+    '''
+    the really useful called function in main: Module() 、GetData()、train_val()
+        model = Module(args) 
+        train_loader, valid_loader, test_loader = GetData(args)
+        train_val(model, args, vis, train_loader, valid_loader, test_loader)
+    '''

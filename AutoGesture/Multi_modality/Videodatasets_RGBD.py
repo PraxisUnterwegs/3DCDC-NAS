@@ -62,8 +62,8 @@ class Videodatasets_RGBD(Dataset):
         # lines: iterable object [(path_1, label_1)，(train/178/M_35596.avi,124 ).....]，& label>7
         lines = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth1, typ1))  # ground_truth1 = ".../dataset_splits/rgb_train_lst.txt"
         lines2 = filter(lambda x: x[1] > 7, get_data_list_and_label(ground_truth2, typ2))
-        #self.inputs = list(lines)
-        #self.inputs2 = list(lines2)
+        #self.inputs = list(lines)  # inputs就是[(path_1, label_1)，(train/178/M_35596.avi,124 ).....]
+        #self.inputs2 = list(lines2)  # inputs2则是[(path_1, label_1)，(train/178/K_35596.avi,124 ).....]
         self.train_miss_path_num = 0
         self.valid_miss_path_num = 0
         self.test_miss_path_num = 0
@@ -201,11 +201,11 @@ class Videodatasets_RGBD(Dataset):
 
         def Sample_Image(imgs_path, sl):
             frams = []
-            for a in sl:
+            for a in sl:  # 遍历 videoPath 路径下的所有 .jpg 文件，sl：['000000.jpg'，'000001.jpg'，……]
                 # img = transform(accimage.Image(os.path.join(imgs_path, "%06d.jpg" % a))) #if use Accimage
                 img = transform(Image.open(os.path.join(imgs_path, "%06d.jpg" % a)))
-                frams.append(self.transform(img).view(3, 112, 112, 1))
-            return torch.cat(frams, dim=3).type(torch.FloatTensor)
+                frams.append(self.transform(img).view(3, 112, 112, 1))  # 1 表示一个frame
+            return torch.cat(frams, dim=3).type(torch.FloatTensor)  # 在第4维度串联，即把frame堆起来
 
         sn = self.sample_duration
         if self.phase == 'train':
@@ -222,19 +222,38 @@ class Videodatasets_RGBD(Dataset):
                                                                                                         int(n * (
                                                                                                                 i + 1) / sn))))
                            for i in range(sn)]
+        '''
+        f 的等效函数：
+        n是currentImageFramesMaximum，也就是文件夹"/Dataset/train/031/K_06200"下.jpg文件的个数
+        sn上面有提，sn=32，sn是参数sample_duration
+        def Frame_Extraction(n, sn):
+            result = []
+            for i in range(sn):
+                start = int(n * i / sn)
+                end = max(int(n * (i + 1) / sn), start + 1)
+                arr = range(start, end)
+                if arr:  # 如果end 比 start 大，则arr不为空
+                    mean = int(np.mean(arr)) 
+                else:
+                    mean = n
+                result.append(mean)
+            return result
+        这个函数的目的是在不同长度的视频里(不同张数的frame里，抽帧)
+
+        '''
         
         #print(index)
         #print(self.inputs[index])
-        videoPath = self.inputs[index][0]
-        videoPath = videoPath.split(".")[0] # remove .avi from the video path 
+        videoPath = self.inputs[index][0]  # self.inputs[index][0] = "……/Dataset/train"
+        videoPath = videoPath.split(".")[0] # remove .avi from the video path ， videopath = "031/K_06200"
         data_path = os.path.join(self.dataset_root, videoPath)  # dataset_root = ".../Dataset/train" ,videopath = "031/K_06200"
-        currentImageFramesMaximum = len(os.listdir(data_path))
-        sl = f(currentImageFramesMaximum)
+        currentImageFramesMaximum = len(os.listdir(data_path))  # 即查询data_path路径下有多少个 .jpg 文件，data_path = "/Dataset/train/031/K_06200"
+        sl = f(currentImageFramesMaximum)  # sl里存的是 000000.jpg ……，而且是一个筛选列表，具体应该是['000000.jpg'，'000001.jpg'，……]
 
         #Iso
         #data_path = os.path.join('/'.join(self.dataset_root.split('/')[:-1]), self.typ1, self.phase,
         #                         '/'.join(self.inputs[index][0].split('/')[-3:]))
-        clip = Sample_Image(data_path, sl)
+        clip = Sample_Image(data_path, sl)  # 在data_path路径下按照列表sl里指定的jpg文件，把frame们给堆叠起来
 
         #data_path2 = os.path.join('/'.join(self.dataset_root.split('/')[:-1]), self.typ2,self.phase,
         #                          '/'.join(self.inputs2[index][0].split('/')[-3:]))
@@ -243,10 +262,15 @@ class Videodatasets_RGBD(Dataset):
         data_path2 = os.path.join(self.dataset_root, videoPath) 
         #data_path2 = os.path.join(self.dataset_root, videoPath) 
         clip2 = Sample_Image(data_path2, sl)
-
         # check if label is the same (for both input lists) depth&rgb
         assert self.inputs[index][1] == self.inputs2[index][1]
         return clip.permute(0, 3, 1, 2), self.inputs[index][1], clip2.permute(0, 3, 1, 2)
+        # __getitm__返回的就是Videodatasets_RGBD类的一个实例
+        # 这个实例包含了clip，clip2张量，他们都是四维的[3, num_sl, 112, 112]，num_sl表示test/003/M_00600文件下.jpg文件的个数
+        # 这个实例还包含了clip对应的label，即self.inputs[index][1]
 
     def __len__(self):
         return len(self.inputs2)
+    
+    
+    

@@ -58,7 +58,8 @@ def init():
     # For the rgb camera output, we want the XLink stream to be named "rgb"
     xout_rgb.setStreamName("rgb")
     # Linking camera preview to XLink input, so that the frames will be sent to host
-    cam_rgb.video.link(xout_rgb.input)
+    cam_rgb.video.link(xout_rgb.input)  # full size frame
+    cam_rgb.preview.link(xout_rgb.input)
 
     # The same XLinkOut mechanism will be used to receive nn results
     xout_nn = pipeline.createXLinkOut()
