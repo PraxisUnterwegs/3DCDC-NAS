@@ -82,10 +82,10 @@ from RingBuffer import RingBuffer
 
 
 
-def cv_show(name,img):
-    cv2.imshow(name,img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+# def cv_show(name,img):
+#     cv2.imshow(name,img)
+#     cv2.waitKey(0)
+#     cv2.destroyAllWindows()
     
 # vc = cv2.VideoCapture('02_Video/00_Scenery.mp4')
 # if vc.isOpened():   # if the file is open properly
@@ -95,12 +95,33 @@ def cv_show(name,img):
 # else:
 #     open = False
 
+sample_duration = 32
+
 
 preprocess = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
+
+
+
+def Frame_Extraction(n, sn):
+    result = []
+    for i in range(sn):
+        start = int(n * i / sn)
+        end = max(int(n * (i + 1) / sn), start + 1)
+        arr = range(start, end)
+        if arr:  # 如果end 比 start 大，则arr不为空
+            mean = int(np.mean(arr)) 
+        else:
+            mean = n
+        result.append(mean)
+    return result
+
+
+extract_frames_id_list = Frame_Extraction(10, sample_duration)
+
     
 
 
@@ -122,10 +143,11 @@ preprocess = transforms.Compose([
 
 args = Config(parse())
 
-device = torch.device('cpu')
+device = torch.device('cpu')  # TODO
+#device = torch.device('cuda:0')  # TODO
 model = Module(args)
 #model = AutoGesture_RGBD_12layers(init_channels8, init_channels16, init_channels32, num_classes, layers)  # 实例化模型架构
-checkpoint = torch.load('/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/AutoGesture/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth',
+checkpoint = torch.load('/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/AutoGesture/checkpoints/epoch3-MK-valid_0.8763-test_0.8776.pth',
                         map_location=device)
 model.load_state_dict(checkpoint)  # 加载模型参数
 model.eval() 
@@ -154,8 +176,10 @@ with depthai.Device(pipeline) as cam:
     input_tensor_rgb = None
     input_tensor_depth = None
     preparedRgb = None
-    buffer_rgb = RingBuffer(32)
-    buffer_depth = RingBuffer(32)
+    #buffer_rgb = RingBuffer(60)
+    #buffer_depth = RingBuffer(60)
+    # buffer_rgb = RingBuffer(32)
+    # buffer_depth = RingBuffer(32)
     class Normaliztion(object):
         """
             same as mxnet, normalize into [-1, 1]
@@ -171,6 +195,11 @@ with depthai.Device(pipeline) as cam:
         normVals[::2] = frame.shape[1]
         return (np.clip(np.array(bbox), 0, 1) * normVals).astype(int)
 
+    frams_rgb = []
+    frams_depth = []
+    buffer_rgb_ready = False
+    buffer_depth_ready = False
+    
     while(True):
         # read frame
         ##############################################################################
@@ -199,8 +228,8 @@ with depthai.Device(pipeline) as cam:
             return cv2.resize(img,(112, 112)).astype(np.float32)
             #return img
         
-        frame_list = []
-        sample_duration = 32
+        #frame_list = []
+        #sample_duration = 32
         
         
         
@@ -208,9 +237,27 @@ with depthai.Device(pipeline) as cam:
         if in_rgb is not None:
             # If the packet from RGB camera is present, we're retrieving the frame in OpenCV format using getCvFrame
             rgbframe = in_rgb.getCvFrame()
-            preparedRgb = transform(rgbframe)
-            preparedRgbTensor = tensorTransformer(preparedRgb).view(3, 112, 112, 1)
-            buffer_rgb.push(preparedRgbTensor)            
+            if len(frams_rgb) <= 60:
+                preparedRgb = transform(rgbframe)
+                preparedRgbTensor = tensorTransformer(preparedRgb).view(3, 112, 112, 1)
+                frams_rgb.append(preparedRgbTensor)
+                if len(frams_rgb) == 60:
+                    buffer_rgb = [frams_rgb[i] for i in extract_frames_id_list]
+                    input_tensor_rgb_no_perm = torch.cat(buffer_rgb, dim=3).type(torch.FloatTensor)
+                    print(f"input_tensor_rgb_no_perm的输出结果：{input_tensor_rgb_no_perm.shape}")
+                    input_tensor_rgb_perm = input_tensor_rgb_no_perm.permute(0, 3, 1, 2)
+                    print(f"input_tensor_rgb_perm的输出结果：{input_tensor_rgb_perm.shape}")
+                    input_tensor_rgb = input_tensor_rgb_perm.unsqueeze(0)
+                    #input_tensor_rgb = input_tensor_rgb.permute(0, 1, 4, 2, 3)
+                    print(f"看看input_rgb_depth的输出结果：{input_tensor_rgb.shape}")
+                    buffer_rgb_ready = True
+                    frams_rgb = [] 
+                else:
+                    buffer_rgb_ready = False
+            
+            #RgbTensor = preparedRgbTensor.to(device)
+            #buffer_rgb.push(RgbTensor) 
+            #buffer_rgb.push(preparedRgbTensor)            
         if in_nn is not None:
             # when data from nn is received, we take the detections array that contains mobilenet-ssd results
             detections = in_nn.detections
@@ -220,10 +267,28 @@ with depthai.Device(pipeline) as cam:
             monoRightFrame = in_right.getCvFrame()
         if in_depth is not None:
             depthFrame = in_depth.getCvFrame()
-            preparedDepth = transform(depthFrame)
-            bgr_image = cv2.cvtColor(preparedDepth,cv2.COLOR_GRAY2BGR)
-            preparedDepthTensor = tensorTransformer(bgr_image).view(3, 112, 112, 1)
-            buffer_depth.push(preparedDepthTensor)
+            if len(frams_depth) <= 60:
+                preparedDepth = transform(depthFrame)
+                bgr_image = cv2.cvtColor(preparedDepth,cv2.COLOR_GRAY2BGR)
+                preparedDepthTensor = tensorTransformer(bgr_image).view(3, 112, 112, 1)
+                frams_depth.append(preparedDepthTensor)
+                if len(frams_depth) == 60:
+                    buffer_depth = [frams_depth[i] for i in extract_frames_id_list]
+                    input_tensor_depth_no_perm = torch.cat(buffer_depth, dim=3).type(torch.FloatTensor)
+                    print(f"input_tensor_depth_no_perm的输出结果：{input_tensor_depth_no_perm.shape}")
+                    input_tensor_depth_perm = input_tensor_depth_no_perm.permute(0, 3, 1, 2)
+                    print(f"input_tensor_depth_perm的输出结果：{input_tensor_depth_perm.shape}")
+                    input_tensor_depth = input_tensor_depth_perm.unsqueeze(0)
+                    #input_tensor_depth = input_tensor_depth.permute(0, 1, 4, 2, 3)
+                    print(f"看看input_tensor_depth的输出结果：{input_tensor_depth.shape}")
+                    buffer_depth_ready = True 
+                    frams_depth = []              
+                else:
+                    buffer_depth_ready = False 
+                
+            #DepthTensor = preparedDepthTensor.to(device)
+            #buffer_depth.push(DepthTensor)
+            #buffer_depth.push(preparedDepthTensor)
             
         ##############################################################################
         
@@ -240,18 +305,28 @@ with depthai.Device(pipeline) as cam:
         #input_tensor_rgb = torch.from_numpy(rgbframe).copy()
         #input_tensor_depth = torch.from_numpy(depthFrame).copy()
         # torch.from_numpy(frames_array).permute(0, 3, 1, 2)
-        if buffer_rgb.is_full() and buffer_depth.is_full():
-            
+        #if buffer_rgb.is_full() and buffer_depth.is_full():
+        if buffer_depth_ready and buffer_rgb_ready:
             start = time.time()
-            numpy_rgb = np.stack(buffer_rgb.get())
+            #frame_extracted_rgb = np.stack(buffer_rgb.get())
+            #index_list_rgb = Frame_Extraction(60,32)
+            # numpy_rgb = np.stack(buffer_rgb.get())
+            #numpy_rgb = frame_extracted_rgb[index_list_rgb]
+            #buffer_rgb.clear()
             #print(f"输出{numpy_rgb.shape}")
-            input_tensor_rgb = torch.from_numpy(numpy_rgb).permute(4,1,0,2,3)
+            #input_tensor_rgb = torch.from_numpy(numpy_rgb).permute(4,1,0,2,3)
+            #input_tensor_rgb = input_tensor_rgb_no_perm.permute(0,3,1,2)
             #frams.append(self.transform(img).view(3, 112, 112, 1))
             #input_tensor_rgb = torch.cat(buffer_rgb.get(), dim=3).type(torch.FloatTensor)
             #print(f"输出：{input_tensor_rgb.shape}")
             
-            numpy_depth = np.stack(buffer_depth.get())
-            input_tensor_depth = torch.from_numpy(numpy_depth).permute(4,1,0,2,3)
+            # numpy_depth = np.stack(buffer_depth.get())
+            #frame_extracted_depth = np.stack(buffer_depth.get())
+            #index_list_depth = Frame_Extraction(60,32)
+            #numpy_depth = frame_extracted_depth[index_list_depth]
+            #buffer_depth.clear()
+            #input_tensor_depth = torch.from_numpy(numpy_depth).permute(4,1,0,2,3)
+            #input_tensor_depth = input_tensor_depth_no_perm.permute(0,3,1,2)
             #input_tensor_depth = torch.cat(buffer_depth.get(), dim=3).type(torch.FloatTensor)
             #print(f"输出：{input_tensor_depth.shape}")
         
@@ -259,14 +334,32 @@ with depthai.Device(pipeline) as cam:
             #     # inference
             with torch.no_grad():  # no bp & gradients compute during inference
                 #print(f"input_tensor_rgb: {input_tensor_rgb.shape}")
-                output = model(input_tensor_rgb, input_tensor_depth)  # input data during inference
-            
+                output = model(input_tensor_rgb, input_tensor_depth)  # output是logits tensor
+                print(f"output张量的尺寸：{output.shape}")  # torch.Size([1, 249]),1 means batch_size = 1, i.e. process one inupt(32 frames stack), 249 means thec nums of classes
+                #print(f"output这个张量是什么样的：{output}")
+                # 在深度学习模型中，模型的最后一层通常是全连接层（fully connected layer），在应用激活函数之前，它的输出是原始的、未经归一化的得分（也称为 logits）。这些得分是没有经过 softmax 或 sigmoid 等归一化函数处理的，因此它们可以是正数、负数或零，直接反映了模型对于每个类别的原始预测强度。
+                # output的返回值是一个logits值，这个可以在原网络定义的forward函数中找到（未经过分类激活函数）
+                # "logits"通常是指网络的输出层的未经过softmax函数处理的原始输出。在softmax之前的输出被称为logits。
+                # top5_label = torch.sort(output, 1, descending=True)[:5]  # 输出结果是二维的，第一维是排序后的值，第二维才是索引
+                #top5_label = torch.sort(output, 1, descending=True)[1][:5]
+                #top5_index = torch.sort(output, 0, descending=True)[:5] 
+                #print(f"Top 5 标签预测:{top5_label}")
+                #print(f"Top 5 index 预测:{top5_index}")
                 # get the predict result
-                _, predicted = torch.max(output, 1)  # return the largest probability classifcation result index
+                
+                # label_num 存储的是每个样本得分最高的类别索引，是一个一维张量(即分类器判别出来 class 的id)
+                # predicted 存储的是每个样本在 label_num 索引处的得分（即分类器判别出来的 class 的概率）
+                # 因为我们每次输入只有一个样本，所以output是[1,249]，1表示输入样本只有一个（这一维只有一个元素）
+                # label_num就是这个样本，predicted就是对这个样本进行预测后概率最高的class的索引
+                logits_score, predicted = torch.max(output, 1)  
+                predict_tag = torch.argmax(output,dim=1)
                 # predicted catch the classification discrimination tag's index ($$id0)
                 prediction = predicted.item()  # convert the index into int type
-                
-                cv2.putText(rgbframe, f"Prediction: {prediction}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                #print(f"当前样本预测后，得分最高的class索引的logits得分情况：{logits_score.item()}")   
+                #print(f"录像的预测结果（置信度最高的索引）是：{prediction}")
+                print(f"录像的预测结果tag:{predict_tag.item()}")
+                # cv2.putText(rgbframe, f"Prediction: {prediction}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                cv2.putText(rgbframe, f"Prediction: {predict_tag.item()}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 # open a window to show the frame
                 cv2.imshow('frame', rgbframe)
             
