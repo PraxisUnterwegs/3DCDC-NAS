@@ -142,13 +142,11 @@ extract_frames_id_list = Frame_Extraction(10, sample_duration)
 # layers = config['common']['layers']
 
 args = Config(parse())
-
 device = torch.device('cpu')  # TODO
 #device = torch.device('cuda:0')  # TODO
-model = Module(args)
+model = Module(args, device=device)
 #model = AutoGesture_RGBD_12layers(init_channels8, init_channels16, init_channels32, num_classes, layers)  # 实例化模型架构
-checkpoint = torch.load('/home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/AutoGesture/checkpoints/epoch3-MK-valid_0.8763-test_0.8776.pth',
-                        map_location=device)
+checkpoint = torch.load(args.init_model, map_location=device)
 model.load_state_dict(checkpoint)  # 加载模型参数
 model.eval() 
 
@@ -203,10 +201,6 @@ with depthai.Device(pipeline) as cam:
 
     
     while(True):
-        current_time = time.time()
-        time_difference = current_time - previous_time
-        #print(f"两次循环之间的时间差: {time_difference:.4f} 秒")
-        previous_time = current_time
         # read frame
         ##############################################################################
         # we try to fetch the data from nn/rgb queues. tryGet will return either the data packet or None if there isn't any
@@ -215,10 +209,7 @@ with depthai.Device(pipeline) as cam:
         in_left = q_left.tryGet()
         in_right = q_right.tryGet()
         in_depth = q_depth.tryGet()
-        
-    
-        
-        
+            
         def transform_params( resize=(320, 240), crop_size=224, flip=0.5):
             left, top = (resize[0] - crop_size) // 2, (resize[1] - crop_size) // 2
             is_flip = False
@@ -290,108 +281,6 @@ with depthai.Device(pipeline) as cam:
                     #print(f"看看input_tensor_depth的输出结果：{input_tensor_depth.shape}")
                     buffer_depth_ready = True           
 
-        # if in_rgb is not None and in_depth is not None:
-        #     # If the packet from RGB camera is present, we're retrieving the frame in OpenCV format using getCvFrame
-        #     rgbframe = in_rgb.getCvFrame()
-        #     print(f"rgbframe的形状: {rgbframe.shape}")
-            
-            
-                
-            
-            
-            
-            
-            # if frame_counter_rgb % 3 == 0:
-            #     preparedRgb = transform(rgbframe)
-            #     preparedRgbTensor = tensorTransformer(preparedRgb).view(3, 112, 112, 1)
-            #     frams_rgb.append(preparedRgbTensor)
-            
-            # frame_counter_rgb += 1
-            # if frame_counter_rgb % 3 == 0:
-            
-            
-            
-            
-            
-            # if frame_counter_rgb % 3 == 0:
-            # if len(frams_rgb) <= 60:
-            #     preparedRgb = transform(rgbframe)
-            #     preparedRgbTensor = tensorTransformer(preparedRgb).view(3, 112, 112, 1)
-            #     frams_rgb.append(preparedRgbTensor)
-                
-            #     if len(frams_rgb) == 60:
-            #         buffer_rgb = [frams_rgb[i] for i in extract_frames_id_list]
-            #         input_tensor_rgb_no_perm = torch.cat(buffer_rgb, dim=3).type(torch.FloatTensor)
-            #         print(f"input_tensor_rgb_no_perm的输出结果：{input_tensor_rgb_no_perm.shape}")
-            #         input_tensor_rgb_perm = input_tensor_rgb_no_perm.permute(0, 3, 1, 2)
-            #         print(f"input_tensor_rgb_perm的输出结果：{input_tensor_rgb_perm.shape}")
-            #         input_tensor_rgb = input_tensor_rgb_perm.unsqueeze(0)
-            #         #input_tensor_rgb = input_tensor_rgb.permute(0, 1, 4, 2, 3)
-            #         print(f"看看input_rgb_depth的输出结果：{input_tensor_rgb.shape}")
-            #         buffer_rgb_ready = True
-            #         frams_rgb = [] 
-            #         frame_counter_rgb = 0
-            #     else:
-            #         buffer_rgb_ready = False
-            
-            #RgbTensor = preparedRgbTensor.to(device)
-            #buffer_rgb.push(RgbTensor) 
-            #buffer_rgb.push(preparedRgbTensor)            
-        # if in_nn is not None:
-        #     # when data from nn is received, we take the detections array that contains mobilenet-ssd results
-        #     detections = in_nn.detections
-        # if in_left is not None and in_right is not None:
-        #     monoLeftFrame = in_left.getCvFrame()
-        # if in_right is not None and in_left is not None:
-        #     monoRightFrame = in_right.getCvFrame()
-        # if in_depth is not None and in_rgb is not None:
-        #     depthFrame = in_depth.getCvFrame()
-        #     print(f"depthframe的形状: {depthFrame.shape}")
-            # frame_counter_depth += 1 
-            
-            # if frame_counter_rgb % 3 == 0:
-            # if len(frams_depth) <= 60:
-            #     preparedDepth = transform(depthFrame)
-            #     bgr_image = cv2.cvtColor(preparedDepth,cv2.COLOR_GRAY2BGR)
-            #     preparedDepthTensor = tensorTransformer(bgr_image).view(3, 112, 112, 1)
-            #     frams_depth.append(preparedDepthTensor)
-                
-            #     if len(frams_depth) == 60:
-            #         buffer_depth = [frams_depth[i] for i in extract_frames_id_list]
-            #         input_tensor_depth_no_perm = torch.cat(buffer_depth, dim=3).type(torch.FloatTensor)
-            #         print(f"input_tensor_depth_no_perm的输出结果：{input_tensor_depth_no_perm.shape}")
-            #         input_tensor_depth_perm = input_tensor_depth_no_perm.permute(0, 3, 1, 2)
-            #         print(f"input_tensor_depth_perm的输出结果：{input_tensor_depth_perm.shape}")
-            #         input_tensor_depth = input_tensor_depth_perm.unsqueeze(0)
-            #         #input_tensor_depth = input_tensor_depth.permute(0, 1, 4, 2, 3)
-            #         print(f"看看input_tensor_depth的输出结果：{input_tensor_depth.shape}")
-            #         buffer_depth_ready = True 
-            #         frams_depth = []    
-            #         frame_counter_depth = 0          
-            #     else:
-            #         buffer_depth_ready = False 
-                
-            #DepthTensor = preparedDepthTensor.to(device)
-            #buffer_depth.push(DepthTensor)
-            #buffer_depth.push(preparedDepthTensor)
-            
-        ##############################################################################
-        
-        # convert OpenCV image into PIL image
-        # pil_img = Image.fromarray(cv2.cvtColor(rgbframe, cv2.COLOR_BGR2RGB))
-        
-        # preprocess - data augmentaion
-        # input_tensor = preprocess(Image)
-        # input_tensor = preprocess(pil_img)
-        #input_batch = input_tensor.unsqueeze(0)  # Add a dimension because the model requires a batch as input
-        
-        #input_tensor_rgb = rgbframe
-        #input_tensor_depth = depthFrame
-        #input_tensor_rgb = torch.from_numpy(rgbframe).copy()
-        #input_tensor_depth = torch.from_numpy(depthFrame).copy()
-        # torch.from_numpy(frames_array).permute(0, 3, 1, 2)
-        #if buffer_rgb.is_full() and buffer_depth.is_full():
-
         if buffer_depth_ready and buffer_rgb_ready:
             print("---------------------------------")
             start = time.time()
@@ -420,55 +309,16 @@ with depthai.Device(pipeline) as cam:
             # if input_tensor_rgb is not None and input_tensor_depth is not None:
             #     # inference
             with torch.no_grad():  # no bp & gradients compute during inference
-                #print(f"input_tensor_rgb: {input_tensor_rgb.shape}")
                 output = model(input_tensor_rgb, input_tensor_depth)  # output是logits tensor
-                print(f"output张量的尺寸：{output.shape}")  # torch.Size([1, 249]),1 means batch_size = 1, i.e. process one inupt(32 frames stack), 249 means thec nums of classes
-                #print(f"output这个张量是什么样的：{output}")
-                # 在深度学习模型中，模型的最后一层通常是全连接层（fully connected layer），在应用激活函数之前，它的输出是原始的、未经归一化的得分（也称为 logits）。这些得分是没有经过 softmax 或 sigmoid 等归一化函数处理的，因此它们可以是正数、负数或零，直接反映了模型对于每个类别的原始预测强度。
-                # output的返回值是一个logits值，这个可以在原网络定义的forward函数中找到（未经过分类激活函数）
-                # "logits"通常是指网络的输出层的未经过softmax函数处理的原始输出。在softmax之前的输出被称为logits。
-                # top5_label = torch.sort(output, 1, descending=True)[:5]  # 输出结果是二维的，第一维是排序后的值，第二维才是索引
-                #top5_label = torch.sort(output, 1, descending=True)[1][:5]
-                # top5_index = torch.sort(output, 0, descending=True)[:]
-                # print(f"------------{output}")
-                # print(f"output shape:{output.shape}===================")
-                #print(f"第179个输出：{output[0,179]}")
-                '''dimension 1 is the probablity for every label'''
-                print(f"输出概率179：{output[0,179]}，输出概率114：{output[0,114]}")
-                # prob = torch.argmax(output, dim=0)
-                # pred = torch.argmax(output, dim=1)
-                # print(f"prob:{output[1][prob]}")
-                # print(f"pred:{pred}")
-                
-                #probs[0][179]
-                #print(f"probability:{probs[0][179]}---------------------------")
-                #print(f"Top 5 标签预测:{top5_label}")
-                #print(f"Top 5 index 预测:{top5_index}")
-                # get the predict result
-                
-                # label_num 存储的是每个样本得分最高的类别索引，是一个一维张量(即分类器判别出来 class 的id)
-                # predicted 存储的是每个样本在 label_num 索引处的得分（即分类器判别出来的 class 的概率）
-                # 因为我们每次输入只有一个样本，所以output是[1,249]，1表示输入样本只有一个（这一维只有一个元素）
-                # label_num就是这个样本，predicted就是对这个样本进行预测后概率最高的class的索引
-                #logits_score, predicted = torch.max(output, 1)  
                 predict_tag = torch.argmax(output,dim=1)
                 probs = [float(output[i,p]) for i,p in enumerate(predict_tag)]
                 print(f"probs scores是：{probs}")
-                # predicted catch the classification discrimination tag's index ($$id0)
-                #prediction = predicted.item()  # convert the index into int type
-                #print(f"当前样本预测后，得分最高的class索引的logits得分情况：{logits_score.item()}")   
-                #print(f"录像的预测结果（置信度最高的索引）是：{prediction}")
                 print(f"录像的预测结果tag:{predict_tag.item()}")
-                #current_time = time.time()
-                #print(current_time)
-                # previous_time = current_time
-                # cv2.putText(rgbframe, f"Prediction: {prediction}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 cv2.putText(rgbframe, f"Prediction: {predict_tag.item()}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 # open a window to show the frame
                 cv2.imshow('frame', rgbframe)
-                depthFrame_resized = cv2.resize(depthFrame, (320, 240))
-                colored = oakd.color_depth_image(depthFrame_resized)
-                cv2.imshow("depth preview", colored)
+                colored = oakd.color_depth_image(depthFrame)
+                cv2.imshow("depth preview", depthFrame)
                 
             
             dt = time.time() - start

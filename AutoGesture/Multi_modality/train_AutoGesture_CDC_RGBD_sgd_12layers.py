@@ -139,7 +139,7 @@ class AverageMeter(object):
 
 # Module()的目的实际上是为了方便训练做出选择（有与旋律模型 or 无预训练模型）
 # The purpose of Module() is actually to facilitate the choice of training(with pre-trained model or without pre-training model)
-def Module(args):
+def Module(args, device=torch.device('cuda:0')):
     print("load from AutoGesture_RGBD_Con_shared_DiffChannels")
     from models.AutoGesture_RGBD_searched_12layers_DiffChannels import AutoGesture_RGBD_12layers as Auto_RGBD_Diff
 
@@ -148,7 +148,7 @@ def Module(args):
                            genotype_con_unshared)
     if args.init_model:
         # model.classifier = torch.nn.Linear(6144, 27)
-        params = torch.load(args.init_model)
+        params = torch.load(args.init_model, map_location=device)
         try:
             model.load_state_dict(params)
             print('Load state dict...')
@@ -167,7 +167,9 @@ def Module(args):
             init.xavier_normal_(model.classifier.weight)
     print('Load module Finished')
     print('=' * 20)
-    return torch.nn.DataParallel(model).cuda() if len(args.gpu_ids) > 1 else model.cuda()
+    if torch.cuda.is_available():
+        return torch.nn.DataParallel(model).cuda() if len(args.gpu_ids) > 1 else model.cuda()
+    return torch.nn.DataParallel(model).cpu()
     # return value is model object
     # torch.nn.DataParallel used to Multi-GPU parallel training
 
