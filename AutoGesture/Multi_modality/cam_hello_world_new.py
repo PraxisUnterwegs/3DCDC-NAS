@@ -6,6 +6,7 @@ import blobconverter
 import cv2
 import depthai
 import numpy as np
+import time
 
 
 def color_depth_image(img):
@@ -27,22 +28,25 @@ pipeline = depthai.Pipeline()
 # First, we want the Color camera as the output
 cam_rgb = pipeline.createColorCamera()
 
-cam_rgb.setPreviewSize(300, 300)  # 300x300 will be the preview frame size, available as 'preview' output of the node
+cam_rgb.setPreviewSize(320, 240)  # 300x300 will be the preview frame size, available as 'preview' output of the node
 cam_rgb.setInterleaved(False)
 
 
 ####################################################################
 left = pipeline.createMonoCamera()
 left.setCamera("left")
-left.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_800_P)
+# left.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_800_P)
+left.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
 right = pipeline.createMonoCamera()
 right.setCamera("right")
-right.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_800_P)
+# right.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_800_P)
+right.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
 #######################################
 cam_stereo = pipeline.createStereoDepth()
 cam_stereo.initialConfig.setConfidenceThreshold(150)
 # cam_stereo.setDefaultProfilePreset(depthai.node.StereoDepth.PresetMode.HIGH_DENSITY)
-cam_stereo.initialConfig.setMedianFilter(depthai.MedianFilter.KERNEL_7x7)
+cam_stereo.initialConfig.setMedianFilter(depthai.MedianFilter.KERNEL_3x3)
+# cam_stereo.initialConfig.setMedianFilter(depthai.MedianFilter.KERNEL_7x7)
 # cam_stereo.initialConfig.setLeftRightCheckThreshold(10)
 # Better handling for occlusions:
 cam_stereo.setLeftRightCheck(True)
@@ -56,14 +60,14 @@ right.out.link(cam_stereo.right)
 #####################################################################
 
 # Next, we want a neural network that will produce the detections
-detection_nn = pipeline.createMobileNetDetectionNetwork()
+#detection_nn = pipeline.createMobileNetDetectionNetwork()
 # Blob is the Neural Network file, compiled for MyriadX. It contains both the definition and weights of the model
 # We're using a blobconverter tool to retreive the MobileNetSSD blob automatically from OpenVINO Model Zoo
-detection_nn.setBlobPath(blobconverter.from_zoo(name='mobilenet-ssd', shaves=6))
+#detection_nn.setBlobPath(blobconverter.from_zoo(name='mobilenet-ssd', shaves=6))
 # Next, we filter out the detections that are below a confidence threshold. Confidence can be anywhere between <0..1>
-detection_nn.setConfidenceThreshold(0.5)
+#detection_nn.setConfidenceThreshold(0.5)
 # Next, we link the camera 'preview' output to the neural network detection input, so that it can produce detections
-cam_rgb.preview.link(detection_nn.input)
+#cam_rgb.preview.link(detection_nn.input)
 
 # XLinkOut is a "way out" from the device. Any data you want to transfer to host need to be send via XLink
 xout_rgb = pipeline.createXLinkOut()
@@ -74,9 +78,9 @@ xout_rgb.setStreamName("rgb")
 cam_rgb.preview.link(xout_rgb.input)
 
 # The same XLinkOut mechanism will be used to receive nn results
-xout_nn = pipeline.createXLinkOut()
-xout_nn.setStreamName("nn")
-detection_nn.out.link(xout_nn.input)
+#xout_nn = pipeline.createXLinkOut()
+#xout_nn.setStreamName("nn")
+#detection_nn.out.link(xout_nn.input)
 ####
 xoutLeft = pipeline.createXLinkOut()
 xoutRight = pipeline.createXLinkOut()
@@ -87,6 +91,7 @@ xoutDepth.setStreamName("depth")
 cam_stereo.syncedLeft.link(xoutLeft.input)
 cam_stereo.syncedRight.link(xoutRight.input)
 cam_stereo.depth.link(xoutDepth.input)
+cam_stereo.setOutputSize(320, 240)
 
 # Pipeline is now finished, and we need to find an available device to run our pipeline
 # we are using context manager here that will dispose the device after we stop using it
@@ -95,7 +100,7 @@ with depthai.Device(pipeline) as device:
 
     # To consume the device results, we get two output queues from the device, with stream names we assigned earlier
     q_rgb = device.getOutputQueue("rgb")
-    q_nn = device.getOutputQueue("nn")
+    #q_nn = device.getOutputQueue("nn")
     q_left = device.getOutputQueue("left")
     q_right = device.getOutputQueue("right")
     q_depth = device.getOutputQueue("depth")
@@ -105,7 +110,7 @@ with depthai.Device(pipeline) as device:
     monoLeftFrame = None
     monoRightFrame = None
     depthFrame = None
-    detections = []
+    #detections = []
 
     # Since the detections returned by nn have values from <0..1> range, they need to be multiplied by frame width/height to
     # receive the actual position of the bounding box on the image
@@ -114,40 +119,49 @@ with depthai.Device(pipeline) as device:
         normVals[::2] = frame.shape[1]
         return (np.clip(np.array(bbox), 0, 1) * normVals).astype(int)
 
-
+    previous_time = time.time()
+    
     # Main host-side application loop
     while True:
+        
+        current_time = time.time()
+        time_difference = current_time - previous_time
+        #print(f"两次循环之间的时间差: {time_difference:.4f} 秒")
+        previous_time = current_time
         # we try to fetch the data from nn/rgb queues. tryGet will return either the data packet or None if there isn't any
         in_rgb = q_rgb.tryGet()
-        in_nn = q_nn.tryGet()
+        #in_nn = q_nn.tryGet()
         in_left = q_left.tryGet()
         in_right = q_right.tryGet()
         in_depth = q_depth.tryGet()
 
-        if in_rgb is not None:
+        if in_rgb is not None and in_depth is not None:
             # If the packet from RGB camera is present, we're retrieving the frame in OpenCV format using getCvFrame
             frame = in_rgb.getCvFrame()
+            print(f"rgbframe的形状: {frame.shape}")
 
-        if in_nn is not None:
+        #if in_nn is not None:
             # when data from nn is received, we take the detections array that contains mobilenet-ssd results
-            detections = in_nn.detections
+            #detections = in_nn.detections
 
-        if in_left is not None:
+        if in_left is not None and in_right is not None:
             monoLeftFrame = in_left.getCvFrame()
 
-        if in_right is not None:
+        if in_right is not None and in_left is not None:
             monoRightFrame = in_right.getCvFrame()
 
-        if in_depth is not None:
+        if in_depth is not None and in_rgb is not None:
             depthFrame = in_depth.getCvFrame()
+            depthFrame_resized = cv2.resize(depthFrame, (320, 240))
+            print(f"depthFrame_resized的形状: {depthFrame_resized.shape}")
 
         if frame is not None:
-            for detection in detections:
-                # for each bounding box, we first normalize it to match the frame size
-                bbox = frameNorm(frame, (detection.xmin, detection.ymin, detection.xmax, detection.ymax))
-                # and then draw a rectangle on the frame to show the actual result
-                cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (255, 0, 0), 2)
-            # After all the drawing is finished, we show the frame on the screen
+            # for detection in detections:
+            #     # for each bounding box, we first normalize it to match the frame size
+            #     bbox = frameNorm(frame, (detection.xmin, detection.ymin, detection.xmax, detection.ymax))
+            #     # and then draw a rectangle on the frame to show the actual result
+            #     cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (255, 0, 0), 2)
+            # # After all the drawing is finished, we show the frame on the screen
             cv2.imshow("rgb preview", frame)
             cv2.moveWindow('rgb preview', 0, 0)  # Adjust the coordinates as needed
         if monoLeftFrame is not None:
@@ -162,9 +176,12 @@ with depthai.Device(pipeline) as device:
             # kernel = np.ones((window_size, window_size), np.float32) / (window_size * window_size)
             # filtered_image = cv2.filter2D(depthFrame, -1, kernel)
             # colored = color_depth_image(filtered_image)
-            colored = color_depth_image(depthFrame)
+            
+            colored = color_depth_image(depthFrame_resized)
             cv2.imshow("depth preview", colored)
-            cv2.moveWindow('depth preview', 600, 0)  # Adjust the coordinates as needed
+            # colored = color_depth_image(depthFrame)
+            # cv2.imshow("depth preview", colored)
+            #cv2.moveWindow('depth preview', 600, 0)  # Adjust the coordinates as needed
 
         # at any time, you can press "q" and exit the main loop, therefore exiting the program itself
         if cv2.waitKey(1) == ord('q'):
