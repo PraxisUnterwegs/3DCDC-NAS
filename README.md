@@ -1,6 +1,14 @@
 # AutoGesture with 3DCDC
 Pytorch code for the TIP paper [**"Searching Multi-Rate and Multi-Modal Temporal Enhanced Networks for Gesture Recognition"**  ](https://arxiv.org/pdf/2008.09412.pdf)
 
+
+### USAGE ROS
+
+```
+ros2 launch AutoGesture inference.launch.py checkpoint:=$HOME/3DCDC-NAS/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth
+```
+
+
 ### Welcome to plug and play 3DCDC in your networks
 ```
 # -------- Vanilla ---------#

@@ -15,7 +15,7 @@ import copy
 
 
 ### ros packaged imports
-from AutoGesture.Multi_modality.utils.config import Config
+from AutoGesture.Multi_modality.utils.config import Config, resolveEnv
 from AutoGesture.Multi_modality.predict import normalizeImageTensor
 from AutoGesture.Multi_modality.predict import transform_image
 from AutoGesture.Multi_modality.oak_d_driver import color_depth_image
@@ -66,9 +66,11 @@ class InferenceRosNode(Node):
         #################################################
         ### Declare and get parameters
         self.declare_parameter('model_config', 'config.yml')
+        self.declare_parameter('model_checkpoint', '')
         self.declare_parameter('rgb_topic', '/rgb/image_raw')
         self.declare_parameter('depth_topic', '/depth/image_raw')   
-        configPath = self.get_parameter('model_config').get_parameter_value().string_value      
+        configPath = self.get_parameter('model_config').get_parameter_value().string_value
+        modelCheckpoint = self.get_parameter('model_checkpoint').get_parameter_value().string_value
         rgb_topic = self.get_parameter('rgb_topic').get_parameter_value().string_value
         depth_topic = self.get_parameter('depth_topic').get_parameter_value().string_value
         #################################################
@@ -91,6 +93,9 @@ class InferenceRosNode(Node):
             def __init__(self, config):
                 self.config = config
         self.args = Config(PseudoArgs(configPath))
+        ### if we have a ros parameter for args.init_model, we use that instead
+        if modelCheckpoint is not '':
+            self.args.init_model = resolveEnv(modelCheckpoint)
         device = torch.device('cpu')
         if torch.cuda.is_available():
             device = torch.cuda.current_device()

@@ -1,11 +1,11 @@
 common:
-  data_dir_root: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/Dataset
-  dataset_splits: /home/jzf/Tasks__Gestures_Classification/3DCDC-NAS/dataset_splits
+  data_dir_root: $GITDIR/Dataset
+  dataset_splits: $GITDIR/3DCDC-NAS/dataset_splits
 
   ### original pre trained checkpoint
-  init_model: /home/kikass/gitclones/3DCDC-NAS/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth
+  init_model: $GITDIR/checkpoints/epoch26-MK-valid_0.6004-test_0.6224.pth
   ### our trained attempt
-  # init_model: /home/kikass/gitclones/3DCDC-NAS/checkpoints/epoch3-MK-valid_0.8763-test_0.8776.pth
+  # init_model: $GITDIR/checkpoints/epoch3-MK-valid_0.8763-test_0.8776.pth
 
 #-------basic parameter----------
   visname: AutoGesture_AUG_RGBD # modify
