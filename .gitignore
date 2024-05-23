@@ -2,6 +2,10 @@
 Dataset/
 IsoGD_labels/
 AutoGesture/checkpoints/
-
+AutoGesture/Multi_modality/log/
+AutoGesture/Single_modality/log/
 AutoGesture/Multi_modality/middle.pth
+AutoGesture/Single_modality/Checkpoints
+AutoGesture/Multi_modality/Checkpoints
+dataset_splits/
 **/*.pyc

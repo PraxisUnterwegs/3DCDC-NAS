@@ -274,7 +274,7 @@ def parse():
                         dest='config', help='to set the parameters')
     parser.add_argument('-r', '--resume', default='', help='load model')
     parser.add_argument('-m', '--mode', help='train or valid')
-    parser.add_argument('-t', '--type', help='K or M')
+    parser.add_argument('-t', '--type', default="M", help='K or M')
     parser.add_argument('-g', '--gpu_ids', default="0,1", help="gpu")
     parser.add_argument('-l', '--res_layer', default=18, help="ResNet Layer")
     parser.add_argument('-i', '--init_model', default="", help="Pretrained model on 20 BN")
